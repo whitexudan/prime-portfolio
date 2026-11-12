@@ -1,0 +1,36 @@
+PASS Unauthenticated data write rejected
+PASS Private data read rejected
+PASS Cross origin login rejected
+PASS Wrong password rejected
+PASS Correct password produces HttpOnly Secure SameSite session
+PASS Bad CSRF rejected
+PASS Cross origin data write rejected
+PASS Save persists and hidden member absent from public API
+PASS Stale revision conflict rejected
+PASS Server validation rejects invalid percent
+PASS Cross origin visit rejected
+PASS Visit increments once with five repeats in same browser session
+PASS Expired session denied
+PASS Logout clears cookie
+PASS Persistent global password throttle after five failures
+{
+  "passed": 15,
+  "checks": [
+    "Unauthenticated data write rejected",
+    "Private data read rejected",
+    "Cross origin login rejected",
+    "Wrong password rejected",
+    "Correct password produces HttpOnly Secure SameSite session",
+    "Bad CSRF rejected",
+    "Cross origin data write rejected",
+    "Save persists and hidden member absent from public API",
+    "Stale revision conflict rejected",
+    "Server validation rejects invalid percent",
+    "Cross origin visit rejected",
+    "Visit increments once with five repeats in same browser session",
+    "Expired session denied",
+    "Logout clears cookie",
+    "Persistent global password throttle after five failures"
+  ]
+}
+

@@ -1,0 +1,234 @@
+{
+  ".env.example": {
+    "bytes": 377,
+    "sha256": "6ea4836b092c2ba506d9866a5a97937cb2dd595489967acf47efbcaa6544cde4"
+  },
+  ".gitignore": {
+    "bytes": 60,
+    "sha256": "4dc91f6dce55bd6dc993fac9fba4d0c3ae499ab1e1e4d7964471c0c111b37392"
+  },
+  "README.md": {
+    "bytes": 8774,
+    "sha256": "f662e0c5768af7afbb13d51987c90c724b3c5fb425165160fe2eefbc315b4e73"
+  },
+  "app/admin/page.tsx": {
+    "bytes": 498,
+    "sha256": "c3d87a76e1ebf684b0658ff3e81880cfb9a546c91a29cec07aa6cba17bf54680"
+  },
+  "app/api/prime/auth/route.ts": {
+    "bytes": 2070,
+    "sha256": "7a154362d3dbc4ca2c8d6de02cb2bde3d326470e745cb79c0b11e3cb348bbdeb"
+  },
+  "app/api/prime/route.ts": {
+    "bytes": 1520,
+    "sha256": "080c72d0dfa67c2232f25abcb9a2aab4935614603cd7f3331bda4092a0e33212"
+  },
+  "app/api/prime/visits/route.ts": {
+    "bytes": 1573,
+    "sha256": "7e0522f311b5168c3550e4f1db30f70b150bfada481cef7adc0d153b4752024e"
+  },
+  "app/error.tsx": {
+    "bytes": 395,
+    "sha256": "528e303a0d9fa71a174ee93aa164433f0cf9f17ab88b311ac84ccce5dc84dbd6"
+  },
+  "app/globals.css": {
+    "bytes": 22005,
+    "sha256": "874ea9731c7a1956db325e382d84a1cf84747f0a1388b9af7ffe31e5010ffd95"
+  },
+  "app/layout.tsx": {
+    "bytes": 1290,
+    "sha256": "b5415e3471da2b6d0e07bd5bb75210b0f1fa1a889edacbbdde075556d01263f3"
+  },
+  "app/not-found.tsx": {
+    "bytes": 182,
+    "sha256": "1a22470a551bcba28f559d008b3aa6e74ac72fd90c80011186f10a7710ef0d01"
+  },
+  "app/page.tsx": {
+    "bytes": 1369,
+    "sha256": "029b084cb74279382c7d784e5fc13b13abaa67af2ed785d1b1d6a0a97b186dc2"
+  },
+  "components/3d/PrimeWorld.tsx": {
+    "bytes": 1397,
+    "sha256": "599595ad3b314121d7fe55196d9ef2c3cf55a82f37b50f4f0a67bb4e7fcb4b0f"
+  },
+  "components/Counter.tsx": {
+    "bytes": 854,
+    "sha256": "c3bc35d928240a3016865852c1f320e497845ea32be94dd6805e71c673a11d1a"
+  },
+  "components/Logo.tsx": {
+    "bytes": 509,
+    "sha256": "4136bb09239c43b25a7b5e0e3400751ca3c758efef98ba502fc9edd528421b37"
+  },
+  "components/Portfolio.tsx": {
+    "bytes": 13919,
+    "sha256": "a07daf78ae3b6daf3520ab9c3c9bd8b8e9c8224842802008330831b5f266b47e"
+  },
+  "components/Terminal.tsx": {
+    "bytes": 1198,
+    "sha256": "4685da69d52e10e0507e0a68e38fa050801e295ef4fbfd96f72d4787aa6b3cb6"
+  },
+  "components/World.tsx": {
+    "bytes": 1571,
+    "sha256": "a5d0bf313696e559128df1d040ddce64fe914cba50733cac1191b7f0e8ce6986"
+  },
+  "components/Writeups.tsx": {
+    "bytes": 4526,
+    "sha256": "2abfaa9472d865c33bd5371c38574c347d38a60ac7e927a6e2155708d2f6c77b"
+  },
+  "components/admin/AdminDashboard.tsx": {
+    "bytes": 7105,
+    "sha256": "17417cbed557fac9dea36ed4e2a040607df02276884386710ee48b567de21d7a"
+  },
+  "data/defaultData.ts": {
+    "bytes": 8098,
+    "sha256": "2f2c6e9c37ba2d960802012ea7aacc09a3bef094b7cbc7659897e8fba5ca89a9"
+  },
+  "docs/VALIDATION.md": {
+    "bytes": 5366,
+    "sha256": "9c93892f0dbb9a1d096a5cff78f3b94fd0ace1e0589b6902313ff2ce6d4c550d"
+  },
+  "docs/screenshots/admin-mobile.png": {
+    "bytes": 18062,
+    "sha256": "5ce44b71054150e3adabacba811b7f7aca88cab6dbd36eb7b0a6ac6255c1a269"
+  },
+  "docs/screenshots/desktop-roster.png": {
+    "bytes": 53142,
+    "sha256": "906c92fde24862eea5e36108d951d994c2a91cea89fd807102fd1f832a7e50d5"
+  },
+  "docs/screenshots/desktop-stats.png": {
+    "bytes": 45926,
+    "sha256": "9b5d4b05c20e377b83fc0ca50d1921fff9f4e4335d54ed7a2450da0f78c76455"
+  },
+  "docs/screenshots/desktop.png": {
+    "bytes": 91779,
+    "sha256": "2689fe72067551572bd957e54574c1621faf179dff42ab4c4923b3c9b74730fe"
+  },
+  "docs/screenshots/mobile-dark.png": {
+    "bytes": 37189,
+    "sha256": "f8f1f0e48d0ab128b634936db5432d8dc2a8c64f2cd829932a79d790c8c261ca"
+  },
+  "docs/screenshots/mobile-writeups.png": {
+    "bytes": 27045,
+    "sha256": "e19a349d54310504292ea53375f9ff9085259f4c20f8e4756ed7bd6b8ff563eb"
+  },
+  "docs/screenshots/mobile.png": {
+    "bytes": 37250,
+    "sha256": "4cc349b717d2758e0446349a5d3bf897b0d7e23b21e62b323de659030a18642a"
+  },
+  "docs/test-results/api-tests-result.txt": {
+    "bytes": 1312,
+    "sha256": "986ec1bd6de4f4d637c09bd5af66da90f6639f039066b5592bd3c774e67d0dfe"
+  },
+  "docs/test-results/build.txt": {
+    "bytes": 1098,
+    "sha256": "641ffb7d93e0e9409b8ec510681eeb59434e087266b9e1969703b2d53e9aae5a"
+  },
+  "docs/test-results/visual-results.json": {
+    "bytes": 5043,
+    "sha256": "07fc6205455188099ff6f8223546f523619a71e78301c25c63d5e7f84cde320a"
+  },
+  "lib/auth.ts": {
+    "bytes": 1597,
+    "sha256": "9e2d7def7fdd93b0701c9106265ae244a9b1cba5942470f9aa251890ace4f80c"
+  },
+  "lib/crypto.ts": {
+    "bytes": 1577,
+    "sha256": "502b28bb2059f3cb05e1ed02a99dd6dcccf62318eb22b0d38976b4e0a47a0f86"
+  },
+  "lib/database.ts": {
+    "bytes": 2040,
+    "sha256": "ec09f021ca04cb46b0b063ec00ed82f403b6ef776b4531d2bc4062612be8651b"
+  },
+  "lib/i18n.ts": {
+    "bytes": 7133,
+    "sha256": "d7ec57e7c55da6c605083161e9ae9e9e668c671ca231bd770829fbb3c6d0f574"
+  },
+  "lib/schema.ts": {
+    "bytes": 3728,
+    "sha256": "d6da16c8824edce70e983678b39a0574597a957de6fb9f5f17136a5bc1878631"
+  },
+  "next-env.d.ts": {
+    "bytes": 81,
+    "sha256": "879741880b6ab48da99dcc06dcc674d381c9826137b0496bf7bb368f302de9fc"
+  },
+  "next.config.ts": {
+    "bytes": 758,
+    "sha256": "19eced4879a14f2bc7460b183fcf603d97207bad6f14a3789c39ab654e9736c4"
+  },
+  "package.json": {
+    "bytes": 720,
+    "sha256": "c38018688d7ed48d343f0de97c460f85f1050b606fa912b8de5d528d8d9b3acf"
+  },
+  "public/fonts/barlow.ttf": {
+    "bytes": 87120,
+    "sha256": "7dde307fa887fc65ff5830cfada77a7decc5dae8d3c816c9d39ba3f1af1c4ed7"
+  },
+  "public/fonts/dmmono.ttf": {
+    "bytes": 44784,
+    "sha256": "c97fcd822f825e9e731867b650a39ee678b609bead29385e320171b573ec0910"
+  },
+  "public/fonts-license-barlow.txt": {
+    "bytes": 4377,
+    "sha256": "186d750eb496a4c17a76385f82be6aea2ac1cf2de074a811d63786cf374ea73f"
+  },
+  "public/fonts-license-dmmono.txt": {
+    "bytes": 4484,
+    "sha256": "2bada5ea45c3c63b7f1ea1f88ce9672c9e4f0c42b2c3b7378949084fe55a3066"
+  },
+  "public/icon.svg": {
+    "bytes": 508,
+    "sha256": "cb0f0c8835a6d9caab8385c92c92d19066843fbc2ce43b5c9052a3f0648f7e71"
+  },
+  "public/logos/monogram-black.svg": {
+    "bytes": 438,
+    "sha256": "d588f9ff79e7b01b4785eabda66007df87ac30abe03cf4dc2fa4242f63cdfca5"
+  },
+  "public/logos/monogram-blue.svg": {
+    "bytes": 438,
+    "sha256": "1dc0ea3a406086e0dc4b2741a508de0e1ebcc13456b295accbd0d6218f7a6229"
+  },
+  "public/logos/monogram-navy.svg": {
+    "bytes": 438,
+    "sha256": "2d79e237fd20ce0d5666df0232558af167b9c892cca9eff7a3449b076b8c061a"
+  },
+  "public/logos/originals/black.jpg": {
+    "bytes": 18476,
+    "sha256": "c87bd1ec1e246ca4e3ff7aa1935ee451a3492569a7a7403a97932d05ee32cd7f"
+  },
+  "public/logos/originals/blue.jpg": {
+    "bytes": 25300,
+    "sha256": "b2ae0577a9ad379991cf0acf7c8a13b923a08f055c2b47e8712bc129177204c9"
+  },
+  "public/logos/originals/navy.jpg": {
+    "bytes": 23114,
+    "sha256": "56727b6a95de302ce1337a8244089e1ac351876da196322c69155718031b0c55"
+  },
+  "public/og.png": {
+    "bytes": 47911,
+    "sha256": "8a6d555eafbba40c5096ed93c7684004c8b62d009c583af98bfb3a845a220619"
+  },
+  "public/og.svg": {
+    "bytes": 693,
+    "sha256": "1c8dce627c97f13703cf1a220fa3ef6f7f23c5f517458ce8c58f05df1242d740"
+  },
+  "scripts/hash-password.mjs": {
+    "bytes": 1033,
+    "sha256": "b70259c538f40c28b5878fafa88aeada4b3ab89ce0c48a176e756cebb3f72ff4"
+  },
+  "store/usePrimeStore.ts": {
+    "bytes": 689,
+    "sha256": "9be46686ac20e4a7d9f1cb282fe69f31c37957d82aa678d5c80f1beb11b32875"
+  },
+  "tests/core.test.ts": {
+    "bytes": 903,
+    "sha256": "a209f357f011f95b3dc2a9ba6e89ec3e7799dcc5209a6ded33f844f2b60608ff"
+  },
+  "tsconfig.json": {
+    "bytes": 453,
+    "sha256": "6c094e6a410dffcb12b8f797bd2ffacaad52b97c6578504525072f3a8796aca6"
+  },
+  "types/prime.ts": {
+    "bytes": 1647,
+    "sha256": "e6f86512ecbb12096f867c4f402484ee19fa1c02c71b5ce9bb31cc3d4110b26f"
+  }
+}

@@ -1,0 +1,29 @@
+# Dépendances
+node_modules/
+
+# Next.js et sorties de build
+.next/
+out/
+build/
+dist/
+
+# Déploiement et outils
+.vercel/
+.turbo/
+coverage/
+
+# Secrets locaux : ne jamais pousser .env.local
+.env*
+!.env.example
+
+# Certificats et fichiers générés
+*.pem
+*.tsbuildinfo
+
+# Système et journaux
+.DS_Store
+Thumbs.db
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*

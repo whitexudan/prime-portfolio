@@ -1,0 +1,30 @@
+   ▲ Next.js 15.5.9
+   - Experiments (use with caution):
+     · cpus: 2
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 8.6s
+   Checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/3) ...
+ ✓ Generating static pages (3/3)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                 Size  First Load JS
+┌ ƒ /                                    54.7 kB         156 kB
+├ ƒ /_not-found                            136 B         102 kB
+├ ƒ /admin                               8.89 kB         110 kB
+├ ƒ /api/prime                             136 B         102 kB
+├ ƒ /api/prime/auth                        136 B         102 kB
+└ ƒ /api/prime/visits                      136 B         102 kB
++ First Load JS shared by all             102 kB
+  ├ chunks/131-d532bbd14ebf7b31.js       45.2 kB
+  ├ chunks/c7879cf7-b5ab1053c1d9a2e7.js  54.2 kB
+  └ other shared chunks (total)           2.1 kB
+
+
+ƒ  (Dynamic)  server-rendered on demand
+
+
+ ⚠ Linting is disabled.
