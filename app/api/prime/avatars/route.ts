@@ -1,9 +1,7 @@
 import {NextResponse} from 'next/server';
 import {randomUUID} from 'node:crypto';
-import {mkdir,writeFile} from 'node:fs/promises';
-import path from 'node:path';
 import {authorized} from '@/lib/auth';
-import {directory} from '@/lib/database';
+import {AVATAR_BUCKET,supabaseAdmin} from '@/lib/supabase-admin';
 export const runtime='nodejs';
 export const dynamic='force-dynamic';
 const MAX_BYTES=3*1024*1024;
@@ -24,9 +22,9 @@ export async function POST(request:Request){
   if(file.size>MAX_BYTES)return NextResponse.json({error:'TOO_LARGE'},{status:413,headers:noStore});
   const bytes=Buffer.from(await file.arrayBuffer());const format=imageFormat(bytes);
   if(!format||(file.type&&file.type!==format.mime))return NextResponse.json({error:'UNSUPPORTED_IMAGE'},{status:415,headers:noStore});
-  const filename=`${randomUUID()}.${format.ext}`;const folder=path.join(directory,'avatars');
-  await mkdir(folder,{recursive:true,mode:0o700});
-  await writeFile(path.join(folder,filename),bytes,{flag:'wx',mode:0o600});
+  const filename=`${randomUUID()}.${format.ext}`;
+  const {error}=await supabaseAdmin().storage.from(AVATAR_BUCKET).upload(filename,bytes,{contentType:format.mime,upsert:false});
+  if(error)return NextResponse.json({error:'STORAGE'},{status:503,headers:noStore});
   return NextResponse.json({url:`/api/prime/avatars/${filename}`,mime:format.mime,size:bytes.length},{status:201,headers:noStore});
- }catch{return NextResponse.json({error:'UPLOAD_FAILED'},{status:400,headers:noStore})}
+ }catch{return NextResponse.json({error:'UPLOAD_FAILED'},{status:503,headers:noStore})}
 }

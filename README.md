@@ -1,6 +1,6 @@
 # ΠΡΙΜΕ — portfolio officiel
 
-Projet source Next.js App Router / TypeScript. Identité éditoriale claire et sombre, cinq palettes, FR/EN, scène React Three Fiber différée, GSAP, Zustand, administration serveur et stockage JSON atomique.
+Projet source Next.js App Router / TypeScript. Identité éditoriale claire et sombre, cinq palettes, FR/EN, scène React Three Fiber différée, GSAP, Zustand, administration serveur et persistance Supabase côté serveur.
 
 ## Démarrer
 
@@ -52,9 +52,9 @@ Sessions HMAC signées, HttpOnly, SameSite Strict, 8 heures, cookies Secure en p
 
 ## Persistance et déploiement
 
-`DATA_DIR` (par défaut `./var`) doit être sur **un disque persistant d’un seul serveur Node**. Les écritures passent par un verrou de fichier puis un renommage atomique, permissions privées. Ce stockage n’est **pas une base de données de production distribuée** et ne convient pas aux instances multiples, aux systèmes de fichiers réseau ou aux fonctions serverless éphémères. Pour ces environnements, remplacer `lib/database.ts` par une base partagée transactionnelle. Sauvegarder régulièrement `store.json`, hors du dossier public. Ne pas modifier le JSON pendant une écriture. Les verrous abandonnés expirent après 30 s ; les transactions sont conçues pour être très courtes.
+`lib/database.ts` conserve le store JSON complet (`data`, compteur et limitation des tentatives admin) dans la table Supabase `prime_store`; les mises à jour concurrentes sont protégées par compare-and-swap. Les avatars sont copiés dans un bucket Storage privé. Pour la création du schéma, les variables d’environnement et l’import initial de `var/store.json`/`var/avatars`, suivre [`SUPABASE_SETUP.md`](SUPABASE_SETUP.md). Conserver une sauvegarde avant migration.
 
-Compteur : API dédiée, jeton aléatoire de session navigateur HttpOnly et déduplication persistante par empreinte SHA-256, garde sessionStorage côté onglet. Pas d’IP, user agent, géolocalisation ou fingerprinting. Les empreintes de session sont des identifiants techniques pseudonymes et non des identités : les traiter comme des données techniques dans votre politique de confidentialité. Elles sont conservées pour éviter tout recomptage d’une même session longue. Prévoir une politique de rétention adaptée en acceptant le compromis de déduplication. Un visiteur bloquant/supprimant les cookies ou un robot peut gonfler le compteur : ce n’est pas une mesure d’audience certifiée. Ajouter une limitation de débit au proxy si nécessaire.
+Compteur : l’API compte des **pages vues**, sans IP, identité, user agent, géolocalisation ou fingerprinting. Ce n’est pas un compteur de visiteurs uniques ni une mesure d’audience certifiée; des actualisations et robots peuvent augmenter le total. Ajouter une limitation de débit au proxy si nécessaire.
 
 ## SEO
 

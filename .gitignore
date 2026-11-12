@@ -27,3 +27,6 @@ Thumbs.db
 npm-debug.log*
 yarn-debug.log*
 pnpm-debug.log*
+
+# Données locales et avatars — ne jamais versionner
+var/

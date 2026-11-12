@@ -1,8 +1,7 @@
 import {NextResponse} from 'next/server';
-import {readFile} from 'node:fs/promises';
-import path from 'node:path';
-import {directory,getData} from '@/lib/database';
+import {getData} from '@/lib/database';
 import {session} from '@/lib/auth';
+import {AVATAR_BUCKET,supabaseAdmin} from '@/lib/supabase-admin';
 export const runtime='nodejs';
 export const dynamic='force-dynamic';
 const filenamePattern=/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}\.(?:jpg|png|webp)$/;
@@ -17,8 +16,9 @@ export async function GET(_request:Request,{params}:RouteContext){
  const isAdmin=!!(await session().catch(()=>null));
  if(!isPublic&&!isAdmin)return new Response(null,{status:404});
  try{
-  const bytes=await readFile(path.join(directory,'avatars',filename));
+  const {data:blob,error}=await supabaseAdmin().storage.from(AVATAR_BUCKET).download(filename);
+  if(error||!blob)return new Response(null,{status:404});
   const ext=filename.slice(filename.lastIndexOf('.')+1);
-  return new NextResponse(new Uint8Array(bytes),{status:200,headers:{'Content-Type':mimeByExtension[ext],'Cache-Control':'public, max-age=31536000, immutable','X-Content-Type-Options':'nosniff','Content-Disposition':'inline'}});
+  return new NextResponse(new Uint8Array(await blob.arrayBuffer()),{status:200,headers:{'Content-Type':mimeByExtension[ext],'Cache-Control':'public, max-age=31536000, immutable','X-Content-Type-Options':'nosniff','Content-Disposition':'inline'}});
  }catch{return new Response(null,{status:404})}
 }
