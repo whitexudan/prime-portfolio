@@ -16,8 +16,13 @@ function normalizeStore(value:unknown):Store{
  if(!value||typeof value!=='object'||!('data' in value)||!value.data||typeof value.data!=='object')throw new Error('INVALID_STORE');
  const store=structuredClone(value) as Store & {visitSessions?:unknown};
  delete store.visitSessions;
- if(!Array.isArray(store.data.achievements)||!Array.isArray(store.data.categories)||!Array.isArray(store.data.domains))throw new Error('INVALID_STORE');
+ if(!Array.isArray(store.data.members)||!Array.isArray(store.data.achievements)||!Array.isArray(store.data.categories)||!Array.isArray(store.data.domains))throw new Error('INVALID_STORE');
  store.data.achievements=store.data.achievements.map(entry=>({...entry,totalTeams:entry.totalTeams??null,ratingPoints:entry.ratingPoints??''}));
+ store.data.members=store.data.members.map(member=>{
+  const raw=(member as unknown as {certifications?:unknown}).certifications;
+  const certifications=Array.isArray(raw)?raw.map((item:unknown)=>typeof item==='string'?{label:item,url:''}:item).filter((item):item is {label:string;url:string}=>item!==null&&typeof item==='object'&&'label' in item&&typeof item.label==='string'&&'url' in item&&typeof item.url==='string'):[];
+  return {...member,certifications};
+ });
  if(JSON.stringify(store.data.categories)===JSON.stringify(previousCategories))store.data.categories=structuredClone(defaultData.categories);
  if(JSON.stringify(store.data.domains)===JSON.stringify(previousDomains))store.data.domains=structuredClone(defaultData.domains);
  store.visits=Number.isFinite(store.visits)?Math.max(0,Math.floor(store.visits)):0;

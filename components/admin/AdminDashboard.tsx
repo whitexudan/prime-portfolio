@@ -5,16 +5,16 @@ import {translations} from '@/lib/i18n';
 import {defaultData} from '@/data/defaultData';
 import type {Data,Member} from '@/types/prime';
 
-type MemberField='categories'|'certifications';
 type LocaleField='role'|'specialty';
 type EditorMode='form'|'json';
+type MemberInput=Omit<Member,'certifications'>&{certifications:(string|Member['certifications'][number])[]};
 
 function isLocalized(value:unknown):value is {fr:string;en:string}{
  if(!value||typeof value!=='object')return false;
  const record=value as Record<string,unknown>;
  return typeof record.fr==='string'&&typeof record.en==='string';
 }
-function isMemberList(value:unknown):value is Member[]{
+function isMemberList(value:unknown):value is MemberInput[]{
  if(!Array.isArray(value))return false;
  return value.every((entry)=>{
   if(!entry||typeof entry!=='object')return false;
@@ -22,7 +22,7 @@ function isMemberList(value:unknown):value is Member[]{
   const links=member.links;
   return typeof member.id==='string'&&typeof member.handle==='string'&&typeof member.publicId==='string'&&
    isLocalized(member.role)&&isLocalized(member.specialty)&&Array.isArray(member.categories)&&member.categories.every(x=>typeof x==='string')&&
-   Array.isArray(member.certifications)&&member.certifications.every(x=>typeof x==='string')&&typeof member.avatar==='string'&&
+   Array.isArray(member.certifications)&&member.certifications.every(x=>typeof x==='string'||!!x&&typeof x==='object'&&typeof (x as Record<string,unknown>).label==='string'&&typeof (x as Record<string,unknown>).url==='string')&&typeof member.avatar==='string'&&
    (member.avatarUrl===undefined||typeof member.avatarUrl==='string')&&typeof member.active==='boolean'&&Number.isInteger(member.order)&&
    typeof member.published==='boolean'&&Array.isArray(links)&&links.every((link)=>!!link&&typeof link==='object'&&typeof (link as Record<string,unknown>).label==='string'&&typeof (link as Record<string,unknown>).url==='string');
  });
@@ -37,7 +37,7 @@ export default function AdminDashboard({authenticated,csrf:initialCsrf,configure
  const [auth,setAuth]=useState(authenticated);const [csrf,setCsrf]=useState(initialCsrf);const [password,setPassword]=useState('');
  const [data,setData]=useState<Data|null>(null);const [revision,setRevision]=useState('');const [collection,setCollection]=useState<keyof Data>('members');
  const [editor,setEditor]=useState('');const [memberDraft,setMemberDraft]=useState<Member[]>([]);
- const [certificationDrafts,setCertificationDrafts]=useState<Record<string,string>>({});const [editorMode,setEditorMode]=useState<EditorMode>('form');
+const [editorMode,setEditorMode]=useState<EditorMode>('form');
  const [message,setMessage]=useState('');const [issues,setIssues]=useState('');const [busy,setBusy]=useState(false);const [uploadingIndex,setUploadingIndex]=useState<number|null>(null);const [itemIndex,setItemIndex]=useState(0);const [dirty,setDirty]=useState(false);
 
  useEffect(()=>{try{const stored=localStorage.getItem('signal-lang');if(stored==='fr'||stored==='en')usePrimeStore.setState({lang:stored})}catch{}},[]);
@@ -50,12 +50,12 @@ export default function AdminDashboard({authenticated,csrf:initialCsrf,configure
    const response=await fetch('/api/prime?admin=1',{cache:'no-store'});
    if(!response.ok){if(response.status===401)setAuth(false);throw new Error('LOAD_FAILED')}
    const value=await response.json();
-   setData(value.data);setRevision(value.revision);setEditor(JSON.stringify(value.data[collection],null,2));setMemberDraft(value.data.members);setCertificationDrafts({});setEditorMode('form');setDirty(false);setIssues('');setMessage('');
+   setData(value.data);setRevision(value.revision);setEditor(JSON.stringify(value.data[collection],null,2));setMemberDraft(value.data.members);setEditorMode('form');setDirty(false);setIssues('');setMessage('');
   }catch{setMessage(t.failed)}finally{setBusy(false)}
  }
  function switchCollection(key:keyof Data){
   if(dirty&&!window.confirm(isFr?'Abandonner les changements non enregistrés ?':'Discard unsaved changes?'))return;
-  setCollection(key);setEditor(JSON.stringify(data?.[key],null,2));setMemberDraft(data?.members??[]);setCertificationDrafts({});setEditorMode('form');setItemIndex(0);setDirty(false);setIssues('');setMessage('');
+  setCollection(key);setEditor(JSON.stringify(data?.[key],null,2));setMemberDraft(data?.members??[]);setEditorMode('form');setItemIndex(0);setDirty(false);setIssues('');setMessage('');
  }
  async function login(event:FormEvent){
   event.preventDefault();setBusy(true);setMessage('');
@@ -75,7 +75,7 @@ export default function AdminDashboard({authenticated,csrf:initialCsrf,configure
    if(response.status===409){setMessage(t.conflict);return}
    if(response.status===403){setAuth(false);setMessage(t.sessionExpired);return}
    if(!response.ok){setIssues(value.issues?.map((issue:{path:string;code:string})=>`${issue.path}: ${issue.code}`).join('\n')||value.error);setMessage(isFr?'Vérifie les champs signalés avant d’enregistrer.':'Check the listed fields before saving.');return}
-   setData(value.data);setRevision(value.revision);setEditor(JSON.stringify(value.data[collection],null,2));setMemberDraft(value.data.members);setCertificationDrafts({});setDirty(false);setMessage(t.saved);
+   setData(value.data);setRevision(value.revision);setEditor(JSON.stringify(value.data[collection],null,2));setMemberDraft(value.data.members);setDirty(false);setMessage(t.saved);
   }catch{setMessage(t.failed)}finally{setBusy(false)}
  }
  function mutate(action:'add'|'delete'|'publish'|'hide'){
@@ -106,10 +106,7 @@ export default function AdminDashboard({authenticated,csrf:initialCsrf,configure
  function updateLocalized(index:number,field:LocaleField,language:'fr'|'en',value:string){
   setMemberDraft(current=>current.map((member,i)=>i===index?{...member,[field]:{...member[field],[language]:value}}:member));setDirty(true);setIssues('');setMessage('');
  }
- function updateMemberList(index:number,field:MemberField,value:string){
-  const values=value.split(/[\n,]/).map(item=>item.trim()).filter(Boolean);
-  updateMember(index,{[field]:values} as Pick<Member,MemberField>);
- }
+
  function updateLink(index:number,linkIndex:number,patch:Partial<Member['links'][number]>){
   const member=memberDraft[index];if(!member)return;
   updateMember(index,{links:member.links.map((link,i)=>i===linkIndex?{...link,...patch}:link)});
@@ -123,13 +120,26 @@ export default function AdminDashboard({authenticated,csrf:initialCsrf,configure
   const member=memberDraft[index];if(!member)return;
   updateMember(index,{links:member.links.filter((_,i)=>i!==linkIndex)});
  }
+ function updateCertification(index:number,certificationIndex:number,patch:Partial<Member['certifications'][number]>){
+  const member=memberDraft[index];if(!member)return;
+  updateMember(index,{certifications:member.certifications.map((certification,i)=>i===certificationIndex?{...certification,...patch}:certification)});
+ }
+ function addCertification(index:number){
+  const member=memberDraft[index];if(!member)return;
+  if(member.certifications.length>=30){setMessage(isFr?'Maximum de 30 certifications atteint.':'Maximum of 30 certifications reached.');return}
+  updateMember(index,{certifications:[...member.certifications,{label:'',url:''}]});
+ }
+ function removeCertification(index:number,certificationIndex:number){
+  const member=memberDraft[index];if(!member)return;
+  updateMember(index,{certifications:member.certifications.filter((_,i)=>i!==certificationIndex)});
+ }
  function toJson(){if(editorMode==='json')return;setEditor(JSON.stringify(memberDraft,null,2));setEditorMode('json');setIssues('');setMessage(isFr?'Formulaire converti en JSON.':'Form converted to JSON.')}
  function toForm(){
   if(editorMode==='form')return;
   try{
    const value=JSON.parse(editor);
    if(!isMemberList(value))throw new Error(isFr?'Le JSON doit être une liste complète de membres.':'JSON must be a complete members list.');
-   setMemberDraft(value);setEditorMode('form');setItemIndex(index=>Math.min(index,Math.max(value.length-1,0)));setIssues('');setMessage(isFr?'JSON converti en formulaire.':'JSON converted to form.');
+   setMemberDraft(value.map(member=>({...member,certifications:member.certifications.map(c=>typeof c==='string'?{label:c,url:''}:c)})));setEditorMode('form');setItemIndex(index=>Math.min(index,Math.max(value.length-1,0)));setIssues('');setMessage(isFr?'JSON converti en formulaire.':'JSON converted to form.');
   }catch(error){setIssues(error instanceof Error?error.message:(isFr?'JSON invalide.':'Invalid JSON.'));setMessage(isFr?'Corrige le JSON pour le convertir en formulaire.':'Fix the JSON before converting it to the form.')}
  }
  async function uploadAvatar(event:ChangeEvent<HTMLInputElement>,index:number){
@@ -181,12 +191,12 @@ export default function AdminDashboard({authenticated,csrf:initialCsrf,configure
        </div>
        <p className="member-category-help">{isFr?'Choisis une ou plusieurs catégories dans la liste du site.':'Choose one or more categories from the site list.'}</p>
       </fieldset>
-      <label className="member-field member-field-wide">{isFr?'Certifications (une par ligne ou séparées par des virgules)':'Certifications (one per line or comma-separated)'}<textarea rows={3} value={certificationDrafts[selectedMember.id]??selectedMember.certifications.join('\n')} onChange={event=>{const value=event.target.value;setCertificationDrafts(current=>({...current,[selectedMember.id]:value}));updateMemberList(itemIndex,'certifications',value)}} placeholder={isFr?'Ex. OSCP, CompTIA Security+':'e.g. OSCP, CompTIA Security+'}/></label>
+      <div className="member-links member-certification-editor"><div className="member-links-heading"><div><p className="admin-kicker">PROFILE / CREDENTIALS</p><h4>{isFr?'Certifications':'Certifications'}</h4></div><button type="button" onClick={()=>addCertification(itemIndex)} disabled={selectedMember.certifications.length>=30}>{isFr?'Ajouter une certification':'Add certification'}</button></div>{selectedMember.certifications.length===0&&<p className="member-empty-links">{isFr?'Aucune certification pour le moment.':'No certifications added yet.'}</p>}{selectedMember.certifications.map((certification,certificationIndex)=><div className="member-link-row" key={`cert-${itemIndex}-${certificationIndex}`}><label className="member-field">{isFr?'Nom de la certification':'Certification name'}<input value={certification.label} onChange={event=>updateCertification(itemIndex,certificationIndex,{label:event.target.value})}/></label><label className="member-field">{isFr?'URL de vérification HTTPS':'HTTPS verification URL'}<input type="url" placeholder="https://…" value={certification.url} onChange={event=>updateCertification(itemIndex,certificationIndex,{url:event.target.value})}/></label><button type="button" className="admin-link-button" onClick={()=>removeCertification(itemIndex,certificationIndex)}>{isFr?'Retirer':'Remove'}</button></div>)}</div>
       <label className="member-field">{isFr?'Ordre d’affichage':'Display order'}<input type="number" min="0" max="999" value={selectedMember.order} onChange={event=>updateMember(itemIndex,{order:Math.max(0,Math.min(999,Number(event.target.value)||0))})}/></label>
       <label className="member-check"><input type="checkbox" checked={selectedMember.active} onChange={event=>updateMember(itemIndex,{active:event.target.checked})}/><span>{isFr?'Membre actif':'Active member'}</span></label>
       <label className="member-check"><input type="checkbox" checked={selectedMember.published} onChange={event=>updateMember(itemIndex,{published:event.target.checked})}/><span>{isFr?'Visible publiquement':'Published on site'}</span></label>
      </div>
-     <div className="member-links"><div className="member-links-heading"><div><p className="admin-kicker">PROFILE / LINKS</p><h4>{isFr?'Liens du membre':'Member links'}</h4></div><button type="button" onClick={()=>addLink(itemIndex)} disabled={selectedMember.links.length>=10}>{isFr?'Ajouter un lien':'Add link'}</button></div>{selectedMember.links.length===0&&<p className="member-empty-links">{isFr?'Aucun lien pour le moment.':'No links added yet.'}</p>}{selectedMember.links.map((link,linkIndex)=><div className="member-link-row" key={`${itemIndex}-${linkIndex}`}><label className="member-field">{isFr?'Libellé':'Label'}<input value={link.label} onChange={event=>updateLink(itemIndex,linkIndex,{label:event.target.value})}/></label><label className="member-field">URL<input type="url" placeholder="https://…" value={link.url} onChange={event=>updateLink(itemIndex,linkIndex,{url:event.target.value})}/></label><button type="button" className="admin-link-button" onClick={()=>removeLink(itemIndex,linkIndex)}>{isFr?'Retirer':'Remove'}</button></div>)}</div>
+     <div className="member-links"><div className="member-links-heading"><div><p className="admin-kicker">PROFILE / SOCIAL LINKS</p><h4>{isFr?'Réseaux sociaux':'Social links'}</h4></div><button type="button" onClick={()=>addLink(itemIndex)} disabled={selectedMember.links.length>=10}>{isFr?'Ajouter un lien':'Add link'}</button></div>{selectedMember.links.length===0&&<p className="member-empty-links">{isFr?'Aucun lien pour le moment.':'No links added yet.'}</p>}{selectedMember.links.map((link,linkIndex)=><div className="member-link-row" key={`${itemIndex}-${linkIndex}`}><label className="member-field">{isFr?'Libellé':'Label'}<input value={link.label} onChange={event=>updateLink(itemIndex,linkIndex,{label:event.target.value})}/></label><label className="member-field">URL<input type="url" placeholder="https://…" value={link.url} onChange={event=>updateLink(itemIndex,linkIndex,{url:event.target.value})}/></label><button type="button" className="admin-link-button" onClick={()=>removeLink(itemIndex,linkIndex)}>{isFr?'Retirer':'Remove'}</button></div>)}</div>
     </div>:<div className="member-empty"><p>{isFr?'Aucun membre pour l’instant.':'No members yet.'}</p><button type="button" onClick={()=>mutateMemberForm('add')}>{isFr?'Créer le premier membre':'Create the first member'}</button></div>):<div className="admin-json-panel"><label htmlFor="json-editor">{t.editor}</label><textarea id="json-editor" spellCheck={false} value={editor} onChange={event=>{setEditor(event.target.value);setDirty(true);setIssues('')}}/></div>}
     <div className="admin-actions admin-save-actions"><button type="button" className="button primary" onClick={()=>void save()} disabled={busy}>{busy?t.loading:t.save}</button><button type="button" onClick={()=>{if(!dirty||window.confirm(isFr?'Abandonner les changements ?':'Discard changes?'))void load()}} disabled={busy}>{t.reload}</button></div>
    </section>
