@@ -36,7 +36,7 @@ Exécuter ces commandes après installation avant mise en production. Un lockfil
 - Source initiale : `data/defaultData.ts`. Les seules statistiques revendiquées sont celles du brief.
 - Cinq profils `PLACEHOLDER`, aucune certification ou identité inventée.
 - Trois writeups `DEMO` sans fausse URL de publication. Grille de neuf maximum par page ; ajouter des entrées depuis l’administration pour atteindre plusieurs pages. Aucun podium inventé. Les trois étapes sont des jalons sans date : aucun ordre chronologique fictif n’est revendiqué. Les entrées datées sont triées par date décroissante, puis les non datées dans leur ordre de saisie.
-- Arsenal proposé, non confirmé, regroupé par libellé d’usage.
+- La collection `tools` reste éditable dans l’administration, mais n’est plus affichée sur le site public.
 - Logos JPG originaux dans `public/logos/originals/`, SVG reconstruit dans `public/logos/` et composant `Logo`. Il s’agit d’une adaptation vectorielle manuelle proche des formes fournies, pas d’un tracé certifié identique au pixel. Le petit drapeau lime et le trait rouge sont conservés. La couleur principale suit le thème.
 - Fonts locales : Barlow Condensed (titres) et DM Mono (texte technique), sous SIL OFL. Aucun appel Google Fonts au runtime. Les glyphes grecs du nom peuvent utiliser la police système de repli.
 - L’accroche anglaise et le manifeste anglais sont délibérément identiques dans les deux langues, comme demandé ; le reste est traduit.
