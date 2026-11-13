@@ -409,3 +409,26 @@ html[data-theme=dark]{--card:color-mix(in srgb,var(--bg) 88%,var(--accent) 12%);
     display: none !important;
   }
 }
+
+
+/* Center and equalize the last member cards */
+@media (min-width: 701px) {
+  .roster {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    grid-auto-rows: 1fr;
+    align-items: stretch;
+  }
+
+  .roster > .operator {
+    grid-column: span 2 !important;
+    margin-top: 0 !important;
+  }
+
+  .roster > .operator:nth-child(4) {
+    grid-column: 2 / span 2 !important;
+  }
+
+  .roster > .operator:nth-child(5) {
+    grid-column: 4 / span 2 !important;
+  }
+}
