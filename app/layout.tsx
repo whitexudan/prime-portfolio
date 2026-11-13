@@ -1,6 +1,8 @@
 import './globals.css';
+import type {Metadata} from 'next';
 import {cookies} from 'next/headers';
 import {getData} from '@/lib/database';
+export const metadata:Metadata={title:'ΠΡΙΜΕ'};
 export default async function RootLayout({children}:{children:React.ReactNode}){
  const stored=(await cookies()).get('signal_lang')?.value;const data=await getData();const lang=stored==='en'||stored==='fr'?stored:data.settings.defaultLanguage;
  const p=data.palettes.find(x=>x.id===data.settings.defaultPalette)||data.palettes[0];
