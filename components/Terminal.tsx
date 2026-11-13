@@ -3,12 +3,14 @@ import { useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import type { FormEvent, KeyboardEvent as ReactKeyboardEvent } from "react";
 import type { Translation } from "@/lib/i18n";
+import { runTerminalCommand } from "@/lib/terminal-commands";
+import type { Data } from "@/types/prime";
 
-type TerminalProps = { t: Translation; domains: string[]; language: "fr" | "en" };
+type TerminalProps = { t: Translation; data: Data; language: "fr" | "en" };
 
-export function Terminal({ t, domains, language }: TerminalProps) {
+export function Terminal({ t, data, language }: TerminalProps) {
   const [command, setCommand] = useState("");
-  const [lines, setLines] = useState<string[]>(["> signal.init()", "↳ Lomé / Togo · 5 operators"]);
+  const [lines, setLines] = useState<string[]>(["> signal.init()", "↳ ΠΡΙΜΕ · Lomé / Togo", "↳ help / aide pour explorer"]);
   const [history, setHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [expanded, setExpanded] = useState(false);
@@ -82,34 +84,8 @@ export function Terminal({ t, domains, language }: TerminalProps) {
     }
   };
 
-  const outputFor = (raw: string): string => {
-    const normalized = raw.trim().toLowerCase();
-    if (normalized === "help") {
-      return isFrench
-        ? "Commandes : help · about · skills · status · whoami · pwd · ls · date · matrix · neofetch · fortune · history · echo · clear"
-        : "Commands: help · about · skills · status · whoami · pwd · ls · date · matrix · neofetch · fortune · history · echo · clear";
-    }
-    if (normalized === "about") return t.terminalAbout;
-    if (normalized === "skills") return domains.join(" / ");
-    if (normalized === "status") return isFrench ? "SIGNAL ÉTABLI · NŒUD : LOMÉ · MODE : DÉMO LOCALE" : "SIGNAL ESTABLISHED · NODE: LOMÉ · MODE: LOCAL DEMO";
-    if (normalized === "whoami") return isFrench ? "visiteur@prime — bienvenue." : "visitor@prime — welcome.";
-    if (normalized === "pwd") return "/home/prime/ctf";
-    if (normalized === "ls") return "README.md   challenges/   notes/   writeups/";
-    if (normalized === "date") {
-      const stamp = new Intl.DateTimeFormat(isFrench ? "fr-FR" : "en-US", { dateStyle: "medium", timeStyle: "short" }).format(new Date());
-      return `${isFrench ? "Heure locale" : "Local time"} : ${stamp}`;
-    }
-    if (normalized === "matrix") return "01010011 01001001 01000111 01001110 01000001 01001100  ·  SIGNAL";
-    if (normalized === "neofetch") return isFrench ? "ΠΡΙΜΕ  /  COLLECTIF CTF  /  LOMÉ, TG  /  SIGNAL : EN LIGNE" : "ΠΡΙΜΕ  /  CTF COLLECTIVE  /  LOMÉ, TG  /  SIGNAL: ONLINE";
-    if (normalized === "fortune") return isFrench ? "Astuce : la curiosité est la commande la plus utile." : "Tip: curiosity is the most useful command.";
-    if (normalized === "history") {
-      const recent = history.slice(-6);
-      return recent.length ? recent.map((item, index) => `${index + 1}  ${item}`).join("  ·  ") : (isFrench ? "Aucune commande enregistrée." : "No commands recorded yet.");
-    }
-    if (normalized === "echo") return "";
-    if (normalized.startsWith("echo ")) return raw.trim().slice(5);
-    return t.unknown;
-  };
+  const outputFor = (raw: string): string[] =>
+    runTerminalCommand(raw, data, language, history);
 
   const submitCommand = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -123,7 +99,7 @@ export function Terminal({ t, domains, language }: TerminalProps) {
       setHistoryIndex(-1);
       return;
     }
-    setLines((previous) => [...previous, `$ ${raw}`, outputFor(raw)].slice(-80));
+    setLines((previous) => [...previous, `$ ${raw}`, ...outputFor(raw)].slice(-80));
     setCommand("");
     setHistoryIndex(-1);
   };
