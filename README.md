@@ -108,7 +108,7 @@ Objet unique (pas une liste) :
 Chaque objet membre :
 - `id` : identifiant interne unique, lettres/chiffres/`_`/`-`.
 - `handle` : pseudonyme affiché; `publicId` : identifiant public court du membre.
-- `role`, `specialty` : rôle et spécialité, chacun au format `{fr,en}`.
+- `role`, `specialty` : rôle et affinité (libellé affiché), chacun au format `{fr,en}`.
 - `categories` : liste des catégories de compétences associées au membre.
 - `certifications` : liste de noms de certifications réellement obtenues.
 - `avatar` : chemin d’avatar géré par l’administration; utiliser le formulaire de téléversement plutôt qu’une image encodée dans le JSON. `avatarUrl` est facultatif et réservé au chemin serveur `/api/prime/avatars/<uuid>.<jpg|png|webp>` généré par l’upload; ne pas y mettre une URL externe.

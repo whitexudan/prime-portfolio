@@ -172,8 +172,8 @@ export default function AdminDashboard({authenticated,csrf:initialCsrf,configure
       <label className="member-field">{isFr?'Libellé de l’avatar':'Avatar label'}<input value={selectedMember.avatar} onChange={event=>updateMember(itemIndex,{avatar:event.target.value})}/></label>
       <label className="member-field">{isFr?'Rôle — français':'Role — French'}<input value={selectedMember.role.fr} onChange={event=>updateLocalized(itemIndex,'role','fr',event.target.value)}/></label>
       <label className="member-field">{isFr?'Rôle — anglais':'Role — English'}<input value={selectedMember.role.en} onChange={event=>updateLocalized(itemIndex,'role','en',event.target.value)}/></label>
-      <label className="member-field">{isFr?'Spécialité — français':'Specialty — French'}<input value={selectedMember.specialty.fr} onChange={event=>updateLocalized(itemIndex,'specialty','fr',event.target.value)}/></label>
-      <label className="member-field">{isFr?'Spécialité — anglais':'Specialty — English'}<input value={selectedMember.specialty.en} onChange={event=>updateLocalized(itemIndex,'specialty','en',event.target.value)}/></label>
+      <label className="member-field">{isFr?'Affinité — français':'Affinity — French'}<input value={selectedMember.specialty.fr} onChange={event=>updateLocalized(itemIndex,'specialty','fr',event.target.value)}/></label>
+      <label className="member-field">{isFr?'Affinité — anglais':'Affinity — English'}<input value={selectedMember.specialty.en} onChange={event=>updateLocalized(itemIndex,'specialty','en',event.target.value)}/></label>
       <fieldset className="member-field-wide member-category-picker">
        <legend>{isFr?'Catégories du site — plusieurs choix possibles':'Site categories — select all that apply'}</legend>
        <div className="member-category-options">
