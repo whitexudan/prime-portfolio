@@ -517,3 +517,10 @@ html[data-theme=dark]{--card:color-mix(in srgb,var(--bg) 88%,var(--accent) 12%);
 .terminal .terminal-theme-toggle:hover { background: rgba(56, 189, 248, 0.12); }
 .terminal-panel[data-terminal-theme="dark"] { background: #0b0f14; border-color: #38bdf8; }
 .terminal-panel[data-terminal-theme="light"] { background: #f8fbff; border-color: #0369a1; }
+
+/* Filled certification chips */
+.operator-info .certifications-tags > span {
+  background: var(--line);
+  border-color: var(--line);
+  color: var(--fg);
+}
