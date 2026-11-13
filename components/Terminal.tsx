@@ -162,7 +162,8 @@ export function Terminal({ t, domains, language }: TerminalProps) {
           {renderShell(true)}
         </section>
       ) : (
-        <button ref={launcherRef} className="terminal-launcher" type="button" onClick={() =>           <span className="terminal-launcher-dot" aria-hidden="true" />
+        <button ref={launcherRef} className="terminal-launcher" type="button" onClick={() => setExpanded(true)} title={openLabel} aria-label={openLabel} aria-expanded={expanded} aria-controls={panelId}>
+          <span className="terminal-launcher-dot" aria-hidden="true" />
           <span className="terminal-launcher-copy"><strong>local.signal</strong><small>{isFrench ? "Déplier le terminal" : "Expand terminal"}</small></span>
           <svg className="terminal-launcher-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <rect x="3" y="4" width="18" height="16" rx="3" />
