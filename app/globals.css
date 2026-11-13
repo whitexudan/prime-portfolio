@@ -381,3 +381,31 @@ html[data-theme=dark]{--card:color-mix(in srgb,var(--bg) 88%,var(--accent) 12%);
 .roster > .operator:nth-child(4) {
   grid-column: auto !important;
 }
+
+
+/* Compact circular terminal launcher on mobile and tablet */
+@media (max-width: 1150px) {
+  .terminal-launcher {
+    width: 56px;
+    height: 56px;
+    min-width: 56px;
+    flex: 0 0 56px;
+    padding: 0;
+    border-radius: 50%;
+    justify-content: center;
+    gap: 0;
+  }
+
+  .terminal-launcher-svg {
+    display: block;
+    width: 24px;
+    height: 24px;
+    flex: 0 0 24px;
+  }
+
+  .terminal-launcher-dot,
+  .terminal-launcher-copy,
+  .terminal-launcher-icon {
+    display: none !important;
+  }
+}
