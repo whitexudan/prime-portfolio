@@ -518,8 +518,10 @@ html[data-theme=dark]{--card:color-mix(in srgb,var(--bg) 88%,var(--accent) 12%);
 .terminal-panel[data-terminal-theme="dark"] { background: #0b0f14; border-color: #38bdf8; }
 .terminal-panel[data-terminal-theme="light"] { background: #f8fbff; border-color: #0369a1; }
 
-/* Filled social and verification links; a medal marker distinguishes certifications. */
+/* Filled social and verification links; match category-chip sizing, medal distinguishes certifications. */
 .operator-links>a{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.operator-detail-group .operator-links{gap:8px;margin-top:10px}
+.operator-detail-group .operator-links>a,.operator-detail-group .operator-certifications>.certification-link-static{min-height:0;padding:5px 10px;font-size:12px;line-height:1.4}
 .operator-certifications>a{border-radius:10px}
-.operator-certifications .certification-mark{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;flex:0 0 18px;border-radius:50%;background:var(--bg);color:var(--accent);font-size:11px;font-weight:700;line-height:1}
-.operator-certifications>.certification-link-static{display:inline-flex;align-items:center;justify-content:space-between;gap:8px;min-height:42px;padding:9px 13px;border:1px solid var(--accent);border-radius:10px;background:var(--accent);color:var(--bg);font-size:12px;line-height:1.35;overflow-wrap:anywhere}
+.operator-certifications .certification-mark{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;flex:0 0 16px;border-radius:50%;background:var(--bg);color:var(--accent);font-size:10px;font-weight:700;line-height:1}
+.operator-detail-group .operator-certifications>.certification-link-static{display:inline-flex;align-items:center;justify-content:space-between;gap:8px;border:1px solid var(--accent);border-radius:10px;background:var(--accent);color:var(--bg);overflow-wrap:anywhere}
