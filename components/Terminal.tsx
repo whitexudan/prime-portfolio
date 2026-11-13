@@ -14,6 +14,7 @@ export function Terminal({ t, data, language }: TerminalProps) {
   const [history, setHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [expanded, setExpanded] = useState(false);
+  const [terminalTheme, setTerminalTheme] = useState<"dark" | "light">("dark");
   const [portalReady, setPortalReady] = useState(false);
   const launcherRef = useRef<HTMLButtonElement>(null);
   const inlineInputRef = useRef<HTMLInputElement>(null);
@@ -27,6 +28,9 @@ export function Terminal({ t, data, language }: TerminalProps) {
   const openLabel = isFrench ? "Ouvrir le terminal" : "Open terminal";
   const closeLabel = isFrench ? "Réduire le terminal" : "Minimize terminal";
   const panelTitle = isFrench ? "Terminal interactif" : "Interactive terminal";
+  const themeLabel = terminalTheme === "dark"
+    ? (isFrench ? "Passer au thème clair" : "Switch to light theme")
+    : (isFrench ? "Passer au thème sombre" : "Switch to dark theme");
 
   useEffect(() => {
     setPortalReady(true);
@@ -107,11 +111,23 @@ export function Terminal({ t, data, language }: TerminalProps) {
   const renderShell = (large: boolean) => {
     const inputId = `${id}-command-${large ? "panel" : "hero"}`;
     return (
-      <aside className={`terminal${large ? " terminal-large" : ""}`} aria-label={t.terminal}>
+      <aside className={`terminal${large ? " terminal-large" : ""}`} data-terminal-theme={terminalTheme} aria-label={t.terminal}>
         <div className="terminal-top">
           <span className="status-dot" aria-hidden="true" />
           <span className="terminal-session">local.signal</span>
           <span className="terminal-path">~/ctf</span>
+          {large && (
+            <button
+              className="terminal-theme-toggle"
+              type="button"
+              title={themeLabel}
+              aria-label={themeLabel}
+              aria-pressed={terminalTheme === "light"}
+              onClick={() => setTerminalTheme((current) => current === "dark" ? "light" : "dark")}
+            >
+              <span aria-hidden="true">{terminalTheme === "dark" ? "☼" : "☾"}</span>
+            </button>
+          )}
           {large && (
             <button className="terminal-collapse" type="button" title={closeLabel} aria-label={closeLabel} aria-expanded={expanded} aria-controls={panelId} onClick={() => setExpanded(false)}>
               <span aria-hidden="true">−</span>
@@ -119,7 +135,14 @@ export function Terminal({ t, data, language }: TerminalProps) {
           )}
         </div>
         <div className="terminal-lines" ref={large ? panelLogRef : inlineLogRef} role="log" aria-live="polite">
-          {lines.slice(-40).map((line, index) => <div key={`${lines.length}-${index}`}>{line}</div>)}
+          {lines.slice(-40).map((line, index) => (
+            <div
+              key={`${lines.length}-${index}`}
+              className={line.startsWith("$ ") ? "terminal-command-line" : line.startsWith(">") || line.startsWith("↳") ? "terminal-system-line" : undefined}
+            >
+              {line}
+            </div>
+          ))}
         </div>
         <form onSubmit={submitCommand}>
           <label htmlFor={inputId} className="sr-only">{t.terminalPrompt}</label>
@@ -134,7 +157,7 @@ export function Terminal({ t, data, language }: TerminalProps) {
   const floatingContent = (
     <div className="terminal-float-layer">
       {expanded ? (
-        <section className="terminal-panel" id={panelId} role="dialog" aria-modal="false" aria-label={panelTitle}>
+        <section className="terminal-panel" id={panelId} data-terminal-theme={terminalTheme} role="dialog" aria-modal="false" aria-label={panelTitle}>
           {renderShell(true)}
         </section>
       ) : (
