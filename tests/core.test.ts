@@ -4,6 +4,7 @@ import {scryptSync,randomBytes} from 'node:crypto';
 import {configured,seal,unseal,verifyPassword} from '../lib/crypto.ts';
 import { runTerminalCommand, type TerminalData } from '../lib/terminal-commands.ts';
 import {memberSchema} from '../lib/schema.ts';
+import {reviewSubmissionSchema} from '../lib/reviews.ts';
 const salt=randomBytes(16).toString('hex');const password=randomBytes(24).toString('hex');
 process.env.SESSION_SECRET=randomBytes(48).toString('hex');
 process.env.ADMIN_PASSWORD_HASH=`scrypt$${salt}$${scryptSync(password,salt,64).toString('hex')}`;
@@ -17,3 +18,5 @@ test('terminal: results sort by rank and achievements include milestones',()=>{c
 test('terminal: writeups mark demos and read published content',()=>{const w=runTerminalCommand('writeups',fixture,'fr').join('\n');assert.match(w,/DÉMO/);assert.doesNotMatch(w,/Secret/);const r=runTerminalCommand('read auth-flow',fixture,'fr').join('\n');assert.match(r,/Étape 1 : examiner les cookies/);assert.match(r,/https:\/\/example\.test\/writeup/);});
 test('terminal: unknown commands guide and ping is simulated',()=>{assert.match(runTerminalCommand('xyz',fixture,'fr').join('\n'),/Commande inconnue/);assert.match(runTerminalCommand('ping',fixture,'fr').join('\n'),/aucune requête réseau/);});
 test('legacy certification strings normalize to verification-link records',()=>{const legacy={id:'legacy-member',handle:'Legacy',publicId:'ID_LEGACY',role:{fr:'Membre',en:'Member'},specialty:{fr:'Web',en:'Web'},categories:[],certifications:['OSCP'],avatar:'',active:true,order:0,published:true,links:[]};assert.deepEqual(memberSchema.parse(legacy).certifications,[{label:'OSCP',url:''}]);const linked=memberSchema.parse({...legacy,certifications:[{label:'OSCP',url:'https://verify.example.test/certificate'}]});assert.equal(linked.certifications[0].url,'https://verify.example.test/certificate');assert.equal(memberSchema.safeParse({...legacy,certifications:[{label:'OSCP',url:'http://verify.example.test/certificate'}]}).success,false)});
+
+test('visitor review input validates names, messages and ratings',()=>{const valid={name:'A visitor',message:'A thoughtful and very useful portfolio experience.',rating:5,website:'',startedAt:Date.now()-3000};assert.equal(reviewSubmissionSchema.safeParse(valid).success,true);assert.equal(reviewSubmissionSchema.safeParse({...valid,name:'A'}).success,false);assert.equal(reviewSubmissionSchema.safeParse({...valid,message:'Too short'}).success,false);assert.equal(reviewSubmissionSchema.safeParse({...valid,rating:6}).success,false)});
