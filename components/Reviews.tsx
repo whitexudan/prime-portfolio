@@ -45,7 +45,7 @@ export function ReviewLauncher({language}:{language:Lang}){
     <span className="visitor-review-launcher-star" aria-hidden="true">★</span><span className="visitor-review-launcher-text">{isFr?'Laisser un avis':'Leave a review'}</span>
    </button>
    {expanded&&<section className="visitor-review-panel" id="visitor-review-panel" role="dialog" aria-modal="false" aria-labelledby="visitor-review-title">
-    <header className="visitor-review-panel-head"><div><p className="eyebrow">{isFr?'ESPACE VISITEUR':'VISITOR SPACE'}</p><h2 id="visitor-review-title">{isFr?'Votre avis compte':'Your feedback matters'}</h2></div><button type="button" className="visitor-review-close" onClick={()=>{setExpanded(false);launcherRef.current?.focus()}} aria-label={isFr?'Fermer':'Close'}>×</button></header>
+    <header className="visitor-review-panel-head"><div><p className="eyebrow">{isFr?'ESPACE VISITEUR':'VISITOR SPACE'}</p><h2 id="visitor-review-title">{isFr?'Votre avis compte':'Your feedback matters'}</h2></div><button type="button" className="visitor-review-close" onClick={()=>{setExpanded(false);launcherRef.current?.focus()}} aria-label={isFr?'Fermer':'Close'}><svg className="visitor-review-close-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg></button></header>
     <p className="visitor-review-note">{isFr?'Les avis sont vérifiés avant leur publication.':'Reviews are checked before publication.'}</p>
     <form className="visitor-review-form" onSubmit={submit}>
      <label htmlFor="visitor-review-name">{isFr?'Votre nom':'Your name'}</label>

@@ -608,3 +608,22 @@ html[data-theme=dark]{--card:color-mix(in srgb,var(--bg) 88%,var(--accent) 12%);
 @media(max-width:1150px){.visitor-review-group{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.visitor-review-card{min-height:230px;padding:20px}}
 @media(max-width:700px){.visitor-review-panel{width:calc(100vw - 24px);max-height:min(76vh,620px);max-height:min(76dvh,620px);padding:18px}.visitor-reviews-section{padding:72px 5%}.visitor-reviews-heading{align-items:flex-start;flex-direction:column;gap:18px}.visitor-reviews-heading .display{font-size:clamp(40px,12vw,64px)}.visitor-review-summary{grid-template-columns:auto auto;text-align:left}.visitor-review-summary small{grid-column:1/-1}.visitor-review-group{grid-template-columns:minmax(0,1fr);gap:14px}.visitor-review-card{min-height:210px}.visitor-review-group.is-static{grid-template-columns:minmax(0,1fr)}.admin-review-shell{padding:24px 5%}.admin-review-page-header{margin-bottom:26px}.admin-review-item{padding:17px}.admin-review-item-head{flex-direction:column}.admin-review-link{white-space:normal}}
 @media(prefers-reduced-motion:reduce){.visitor-review-window.is-moving .visitor-review-track{animation:none!important;transform:none!important;will-change:auto}}
+
+
+/* Center visitor review close icon */
+.visitor-review-close {
+  display: grid;
+  place-items: center;
+  padding: 0;
+  line-height: 1;
+}
+.visitor-review-close-icon {
+  display: block;
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  pointer-events: none;
+}
