@@ -1,0 +1,6 @@
+diff --git a/data/defaultData.ts b/data/defaultData.ts
+--- a/data/defaultData.ts
++++ b/data/defaultData.ts
+@@ -67 +67 @@
+- settings:{defaultTheme:'light',defaultPalette:'matrix',defaultLanguage:'fr',enable3d:true}
++ settings:{defaultTheme:'light',defaultPalette:'red',defaultLanguage:'fr',enable3d:true}

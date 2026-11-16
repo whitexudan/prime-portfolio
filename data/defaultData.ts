@@ -4,8 +4,8 @@ export const defaultData:Data = {
  version:1,
  texts:{
   hero:l('WE TEST OUR SKILLS, BREAK CODES AND OWN SYSTEMS','WE TEST OUR SKILLS, BREAK CODES AND OWN SYSTEMS'),
-  intro:l('ΠΡΙΜΕ est une équipe CTF basée à Lomé, au Togo. Nous résolvons des challenges, recherchons les failles et partageons ce que nous apprenons.','ΠΡΙΜΕ is a CTF team based in Lomé, Togo. We solve challenges, investigate weaknesses, and share what we learn.'),
-  signature:l('« Depuis Lomé, nous cherchons le signal dans le silence. »','“From Lomé, we look for the signal in the silence.”'),
+  intro:l('ΠΡΙΜΕ est une équipe CTF basée à Kara, au Togo. Nous résolvons des challenges, recherchons les failles et partageons ce que nous apprenons.','ΠΡΙΜΕ is a CTF team based in Kara, Togo. We solve challenges, investigate weaknesses, and share what we learn.'),
+  signature:l('« Depuis Kara, nous cherchons le signal dans le silence. »','“From Kara, we look for the signal in the silence.”'),
   identity:l('Cinq opérateurs. Une curiosité commune. Nous explorons les systèmes pour comprendre leurs limites, ensemble.','Five operators. One shared curiosity. We explore systems to understand their limits, together.'),
   manifesto:l('WE DON’T MEMORIZE SOLUTIONS.\nWE LEARN HOW SYSTEMS FAIL.','WE DON’T MEMORIZE SOLUTIONS.\nWE LEARN HOW SYSTEMS FAIL.'),
   principles:[l('Observer avant d’agir.','Observe before acting.'),l('Comprendre avant d’exploiter.','Understand before exploiting.'),l('Documenter nos méthodes.','Document our methods.'),l('Partager nos connaissances.','Share our knowledge.'),l('Automatiser le répétitif.','Automate repetitive tasks.'),l('Progresser collectivement.','Progress together.'),l('Respecter les règles des compétitions.','Respect competition rules.'),l('Travailler uniquement en environnement autorisé.','Work only in authorized environments.')]

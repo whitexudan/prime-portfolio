@@ -60,7 +60,7 @@ export function runTerminalCommand(raw:string,data:TerminalData,language:Lang,hi
  case "date":return [new Intl.DateTimeFormat(language==="fr"?"fr-FR":"en-US",{dateStyle:"medium",timeStyle:"medium"}).format(new Date())];
  case "ping":return [language==="fr"?"Signal simulé · aucune requête réseau envoyée.":"Simulated signal · no network request sent."];
  case "matrix":return ["01010000 01010010 01001001 01001101 01000101","wake up, CTF player..."];
- case "neofetch":return ["ΠΡΙΜΕ · CTF team · Lomé, Togo",`${members.length} ${language==="fr"?"membres publiés":"published members"} · ${data.domains.length} ${language==="fr"?"domaines":"domains"}`];
+ case "neofetch":return ["ΠΡΙΜΕ · CTF team · Kara, Togo",`${members.length} ${language==="fr"?"membres publiés":"published members"} · ${data.domains.length} ${language==="fr"?"domaines":"domains"}`];
  case "fortune":{const f=language==="fr"?["Un bon write-up est une victoire partagée.","Lis les logs; les indices aiment s'y cacher.","La curiosité est un outil de pentest.","Un flag à la fois."]:["A good write-up is a shared victory.","Read the logs; clues like to hide there.","Curiosity is a pentester's tool.","One flag at a time."];return [f[history.length%f.length]];}
  case "history":return history.length?history.slice(-10).map((x,i)=>`${Math.max(1,history.length-Math.min(history.length,10)+i+1)}  ${x}`):[language==="fr"?"Aucune commande dans l'historique.":"No commands in history."];
  case "echo":{const t=input.slice(first.length).trim();return t?[t]:[];}

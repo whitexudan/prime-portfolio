@@ -10,7 +10,7 @@ type TerminalProps = { t: Translation; data: Data; language: "fr" | "en" };
 
 export function Terminal({ t, data, language }: TerminalProps) {
   const [command, setCommand] = useState("");
-  const [lines, setLines] = useState<string[]>(["> signal.init()", "↳ ΠΡΙΜΕ · Lomé / Togo", "↳ help / aide pour explorer"]);
+  const [lines, setLines] = useState<string[]>(["> signal.init()", "↳ ΠΡΙΜΕ · Kara / Togo", "↳ help / aide pour explorer"]);
   const [history, setHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [expanded, setExpanded] = useState(false);
