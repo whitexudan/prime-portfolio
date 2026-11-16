@@ -1,0 +1,49 @@
+diff --git a/components/admin/AdminDashboard.tsx b/components/admin/AdminDashboard.tsx
+--- a/components/admin/AdminDashboard.tsx
++++ b/components/admin/AdminDashboard.tsx
+@@ -164,11 +164,11 @@
+  const names:Partial<Record<keyof Data,string>>={texts:t.texts,members:t.members,achievements:t.achievements,stats:t.stats,categories:'Scores',writeups:t.writeups,tools:t.toolsAdmin,socials:t.socials,palettes:t.palettes,settings:t.settings,domains:t.domains};
+ 
+  return <main className="admin-shell">
+-  <header className="admin-header"><a href="/">ΠΡΙΜΕ ↗</a>{auth&&<a className="admin-review-link" href="/admin/reviews">{lang==='fr'?'Avis visiteurs':'Visitor reviews'} ↗</a>}<button type="button" onClick={()=>setLang(lang==='fr'?'en':'fr')}>FR / EN</button>{auth&&<button type="button" disabled={busy} onClick={async()=>{try{const response=await fetch('/api/prime/auth',{method:'DELETE',headers:{'x-csrf-token':csrf}});if(!response.ok)throw new Error();setAuth(false);setData(null);setCsrf('')}catch{setMessage(t.failed)}}}>{t.logout}</button>}</header>
++  <header className="admin-header"><a href="/">ΠΡΙΜΕ ↗</a><button type="button" onClick={()=>setLang(lang==='fr'?'en':'fr')}>FR / EN</button>{auth&&<button type="button" disabled={busy} onClick={async()=>{try{const response=await fetch('/api/prime/auth',{method:'DELETE',headers:{'x-csrf-token':csrf}});if(!response.ok)throw new Error();setAuth(false);setData(null);setCsrf('')}catch{setMessage(t.failed)}}}>{t.logout}</button>}</header>
+   <p className="eyebrow">CONTROL ROOM / {t.admin}</p><h1>{auth?t.admin:t.login}</h1><p className="admin-warning">{auth?t.adminWarning:t.loginText}</p>
+   {!configured&&<p role="alert">{t.notConfigured}</p>}
+   {!auth?<form className="login-form" onSubmit={login}><label htmlFor="password">{t.password}</label><input id="password" type="password" autoComplete="current-password" required value={password} onChange={event=>setPassword(event.target.value)} maxLength={1024}/><button className="button primary" disabled={busy||!configured}>{busy?t.loading:t.login}</button></form>:!data?<button type="button" onClick={()=>void load()}>{busy?t.loading:t.reload}</button>:<div className="admin-layout">
+-   <nav aria-label={t.admin}>{Object.entries(names).map(([key,name])=><button type="button" className={collection===key?'selected':''} key={key} onClick={()=>switchCollection(key as keyof Data)}>{name}</button>)}</nav>
++   <nav aria-label={t.admin}>{Object.entries(names).map(([key,name])=><button type="button" className={collection===key?'selected':''} key={key} onClick={()=>switchCollection(key as keyof Data)}>{name}</button>)}{auth&&<a className="admin-review-nav-link" href="/admin/reviews">{lang==='fr'?'Avis visiteurs':'Visitor reviews'} ↗</a>}</nav>
+    <section className="admin-editor">
+     <div className="admin-section-heading"><div><p className="admin-kicker">DATA COLLECTION / {String(collection).toUpperCase()}</p><h2>{names[collection]}</h2></div><p>{t.editorHelp}</p></div>
+     {collection==='members'&&<div className="admin-mode-switch"><div className="admin-mode-buttons" role="group" aria-label={isFr?'Mode d’édition':'Editing mode'}><button type="button" aria-pressed={editorMode==='form'} className={editorMode==='form'?'is-active':''} disabled={editorMode==='form'} onClick={toForm}>{isFr?'Formulaire':'Form'}</button><button type="button" aria-pressed={editorMode==='json'} className={editorMode==='json'?'is-active':''} disabled={editorMode==='json'} onClick={toJson}>{isFr?'JSON ← Formulaire':'JSON ← Form'}</button></div><p>{isFr?'La conversion porte sur toute la liste des membres, avatar compris.':'Conversion applies to the full member list, including avatars.'}</p></div>}
+diff --git a/app/globals.css b/app/globals.css
+--- a/app/globals.css
++++ b/app/globals.css
+@@ -587,7 +587,7 @@
+ .visitor-review-card footer strong{font-size:12px;overflow-wrap:anywhere}
+ .visitor-review-card time{font-size:10px;color:var(--muted);white-space:nowrap}
+ @keyframes visitor-review-marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+-.admin-review-link{font-size:11px;padding:8px 11px;border:1px solid var(--line);border-radius:99px;white-space:nowrap;color:var(--fg)}
++
+ .admin-review-shell{min-height:100vh}
+ .admin-review-page-header{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:36px}
+ .admin-review-page-header a,.admin-review-shell>a{color:var(--fg);font-size:12px}
+@@ -604,9 +604,9 @@
+ .admin-review-actions button:disabled{opacity:.6;cursor:wait}
+ .admin-review-error{color:#e16d6d;font-size:12px}
+ .admin-review-empty{padding:20px 0;color:var(--muted)}
+-@media(max-width:1150px){.visitor-review-launcher{width:56px;height:56px;min-width:56px;padding:0;justify-content:center;border-radius:50%;gap:0}.visitor-review-launcher-text{display:none}.visitor-review-launcher-star{font-size:22px}.admin-review-link{font-size:10px;padding:7px 9px}}
++@media(max-width:1150px){.visitor-review-launcher{width:56px;height:56px;min-width:56px;padding:0;justify-content:center;border-radius:50%;gap:0}.visitor-review-launcher-text{display:none}.visitor-review-launcher-star{font-size:22px}}
+ @media(max-width:1150px){.visitor-review-group{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.visitor-review-card{min-height:230px;padding:20px}}
+-@media(max-width:700px){.visitor-review-panel{width:calc(100vw - 24px);max-height:min(76vh,620px);max-height:min(76dvh,620px);padding:18px}.visitor-reviews-section{padding:72px 5%}.visitor-reviews-heading{align-items:flex-start;flex-direction:column;gap:18px}.visitor-reviews-heading .display{font-size:clamp(40px,12vw,64px)}.visitor-review-summary{grid-template-columns:auto auto;text-align:left}.visitor-review-summary small{grid-column:1/-1}.visitor-review-group{grid-template-columns:minmax(0,1fr);gap:14px}.visitor-review-card{min-height:210px}.visitor-review-group.is-static{grid-template-columns:minmax(0,1fr)}.admin-review-shell{padding:24px 5%}.admin-review-page-header{margin-bottom:26px}.admin-review-item{padding:17px}.admin-review-item-head{flex-direction:column}.admin-review-link{white-space:normal}}
++@media(max-width:700px){.visitor-review-panel{width:calc(100vw - 24px);max-height:min(76vh,620px);max-height:min(76dvh,620px);padding:18px}.visitor-reviews-section{padding:72px 5%}.visitor-reviews-heading{align-items:flex-start;flex-direction:column;gap:18px}.visitor-reviews-heading .display{font-size:clamp(40px,12vw,64px)}.visitor-review-summary{grid-template-columns:auto auto;text-align:left}.visitor-review-summary small{grid-column:1/-1}.visitor-review-group{grid-template-columns:minmax(0,1fr);gap:14px}.visitor-review-card{min-height:210px}.visitor-review-group.is-static{grid-template-columns:minmax(0,1fr)}.admin-review-shell{padding:24px 5%}.admin-review-page-header{margin-bottom:26px}.admin-review-item{padding:17px}.admin-review-item-head{flex-direction:column}}
+ @media(prefers-reduced-motion:reduce){.visitor-review-window.is-moving .visitor-review-track{animation:none!important;transform:none!important;will-change:auto}}
+ 
+ 
+@@ -627,3 +627,7 @@
+   stroke-linecap: round;
+   pointer-events: none;
+ }
++
++/* Visitor reviews link in the vertical admin menu */
++.admin-layout>nav .admin-review-nav-link{display:block;border:1px solid var(--line);border-radius:30px;padding:9px 14px;color:var(--fg);font:inherit;text-align:left;text-decoration:none}
++@media(max-width:1150px){.admin-layout>nav .admin-review-nav-link{font-size:11px}}
