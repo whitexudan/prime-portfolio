@@ -1,5 +1,5 @@
 'use client';
-import {useCallback,useEffect,useRef,useState,type FormEvent} from 'react';
+import {useCallback,useEffect,useId,useRef,useState,type FormEvent} from 'react';
 import {createPortal} from 'react-dom';
 
 type Lang='fr'|'en';
@@ -18,10 +18,22 @@ export function ReviewLauncher({language}:{language:Lang}){
  const [notice,setNotice]=useState<Notice>(null);
  const launcherRef=useRef<HTMLButtonElement>(null);
  const nameRef=useRef<HTMLInputElement>(null);
+ function restoreLauncherFocus(){
+  if(window.matchMedia('(max-width: 1150px)').matches){
+   const mobileLauncher=document.querySelector<HTMLButtonElement>('.mobile-tools-launcher');
+   if(mobileLauncher){mobileLauncher.focus();return}
+  }
+  launcherRef.current?.focus();
+ }
  useEffect(()=>setReady(true),[]);
  useEffect(()=>{
+  const openFromMobile=()=>{setStartedAt(Date.now());setNotice(null);setExpanded(true)};
+  window.addEventListener('prime:open-reviews',openFromMobile);
+  return()=>window.removeEventListener('prime:open-reviews',openFromMobile);
+ },[]);
+ useEffect(()=>{
   if(!expanded)return;
-  const onKey=(event:KeyboardEvent)=>{if(event.key==='Escape'){setExpanded(false);launcherRef.current?.focus()}};
+  const onKey=(event:KeyboardEvent)=>{if(event.key==='Escape'){setExpanded(false);restoreLauncherFocus()}};
   window.addEventListener('keydown',onKey);
   const focus=window.setTimeout(()=>nameRef.current?.focus(),60);
   return()=>{window.removeEventListener('keydown',onKey);window.clearTimeout(focus)};
@@ -45,19 +57,63 @@ export function ReviewLauncher({language}:{language:Lang}){
     <span className="visitor-review-launcher-star" aria-hidden="true">★</span><span className="visitor-review-launcher-text">{isFr?'Laisser un avis':'Leave a review'}</span>
    </button>
    {expanded&&<section className="visitor-review-panel" id="visitor-review-panel" role="dialog" aria-modal="false" aria-labelledby="visitor-review-title">
-    <header className="visitor-review-panel-head"><div><p className="eyebrow">{isFr?'ESPACE VISITEUR':'VISITOR SPACE'}</p><h2 id="visitor-review-title">{isFr?'Votre avis compte':'Your feedback matters'}</h2></div><button type="button" className="visitor-review-close" onClick={()=>{setExpanded(false);launcherRef.current?.focus()}} aria-label={isFr?'Fermer':'Close'}><svg className="visitor-review-close-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg></button></header>
+    <header className="visitor-review-panel-head"><div><p className="eyebrow">{isFr?'ESPACE VISITEUR':'VISITOR SPACE'}</p><h2 id="visitor-review-title">{isFr?'Votre avis compte':'Your feedback matters'}</h2></div><button type="button" className="visitor-review-close" onClick={()=>{setExpanded(false);restoreLauncherFocus()}} aria-label={isFr?'Fermer':'Close'}><svg className="visitor-review-close-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg></button></header>
     <p className="visitor-review-note">{isFr?'Les avis sont vérifiés avant leur publication.':'Reviews are checked before publication.'}</p>
     <form className="visitor-review-form" onSubmit={submit}>
-     <label htmlFor="visitor-review-name">{isFr?'Votre nom':'Your name'}</label>
-     <input ref={nameRef} id="visitor-review-name" name="name" value={name} onChange={e=>setName(e.currentTarget.value)} minLength={2} maxLength={60} autoComplete="name" required />
-     <fieldset className="visitor-review-rating"><legend>{isFr?'Votre note':'Your rating'}</legend><div className="visitor-review-stars" role="radiogroup" aria-label={isFr?'Note de 1 à 5 étoiles':'Rating from 1 to 5 stars'}>{[1,2,3,4,5].map(value=><label className="visitor-review-star-option" key={value}><input type="radio" name="visitor-rating" value={value} checked={rating===value} onChange={()=>setRating(value)} aria-label={isFr?`${value} étoile${value>1?'s':''}`:`${value} star${value>1?'s':''}`} /><span aria-hidden="true">★</span></label>)}</div></fieldset>
-     <label htmlFor="visitor-review-message">{isFr?'Votre avis':'Your review'}</label>
-     <textarea id="visitor-review-message" name="review" value={message} onChange={e=>setMessage(e.currentTarget.value)} minLength={15} maxLength={700} rows={5} required />
+     <div className="visitor-review-field">
+      <label htmlFor="visitor-review-name"><span>{isFr?'Votre nom':'Your name'}</span><span className="visitor-review-field-meta">01</span></label>
+      <input ref={nameRef} id="visitor-review-name" name="name" value={name} onChange={e=>setName(e.currentTarget.value)} minLength={2} maxLength={60} autoComplete="name" placeholder={isFr?'Ex. Afi K.':'e.g. Alex K.'} required />
+     </div>
+     <fieldset className="visitor-review-rating"><legend><span className="visitor-review-field-meta">02</span>{isFr?'Votre note':'Your rating'}</legend><div className="visitor-review-stars" role="radiogroup" aria-label={isFr?'Note de 1 à 5 étoiles':'Rating from 1 to 5 stars'}>{[1,2,3,4,5].map(value=><label className="visitor-review-star-option" key={value}><input type="radio" name="visitor-rating" value={value} checked={rating===value} onChange={()=>setRating(value)} aria-label={isFr?`${value} étoile${value>1?'s':''}`:`${value} star${value>1?'s':''}`} /><span aria-hidden="true">★</span></label>)}</div></fieldset>
+     <div className="visitor-review-field visitor-review-message-field">
+      <label htmlFor="visitor-review-message"><span>{isFr?'Votre avis':'Your review'}</span><span className="visitor-review-field-meta">{message.length}/700</span></label>
+      <textarea id="visitor-review-message" name="review" value={message} onChange={e=>setMessage(e.currentTarget.value)} minLength={15} maxLength={700} rows={4} placeholder={isFr?'Qu’avez-vous apprécié dans votre visite ?':'What did you enjoy about your visit?'} required />
+     </div>
      <div className="visitor-review-honeypot" aria-hidden="true"><label htmlFor="visitor-review-website">{isFr?'Ne pas remplir':'Leave this empty'}</label><input id="visitor-review-website" name="website" tabIndex={-1} autoComplete="off" /></div>
      {notice&&<p className={`visitor-review-notice ${notice==='success'?'is-success':'is-error'}`} role="status">{notice==='success'?(isFr?'Merci ! Votre avis est enregistré et sera publié après vérification.':'Thank you! Your review is saved and will be published after moderation.'):notice==='limited'?(isFr?'Merci de patienter avant d’envoyer un nouvel avis.':'Please wait before submitting another review.'):notice==='invalid'?(isFr?'Vérifiez le nom, la note et la longueur du texte.':'Check the name, rating, and review length.'):isFr?'Envoi impossible pour le moment. Réessayez plus tard.':'Could not submit right now. Please try again later.'}</p>}
      <button className="visitor-review-submit" type="submit" disabled={sending}>{sending?(isFr?'Envoi…':'Submitting…'):(isFr?'Envoyer mon avis':'Submit review')} <span aria-hidden="true">↗</span></button>
     </form>
    </section>}
+   <MobileToolsLauncher language={language}/>
+  </div>
+ );
+ return ready?createPortal(widget,document.body):null;
+}
+
+function MobileToolsLauncher({language}:{language:Lang}){
+ const isFr=language==='fr';
+ const [ready,setReady]=useState(false);
+ const [open,setOpen]=useState(false);
+ const launcherRef=useRef<HTMLButtonElement>(null);
+ const menuId=`mobile-tools-${useId().replace(/:/g,'')}`;
+ useEffect(()=>setReady(true),[]);
+ useEffect(()=>{
+  if(!open)return;
+  const onKey=(event:KeyboardEvent)=>{if(event.key==='Escape'){setOpen(false);launcherRef.current?.focus()}};
+  window.addEventListener('keydown',onKey);
+  return()=>window.removeEventListener('keydown',onKey);
+ },[open]);
+ function openTool(tool:'terminal'|'reviews'){
+  setOpen(false);
+  window.dispatchEvent(new Event(tool==='terminal'?'prime:open-terminal':'prime:open-reviews'));
+ }
+ const widget=(
+  <div className="mobile-tools-layer">
+   <div className="mobile-tools-menu" id={menuId} role="group" aria-label={isFr?'Outils du site':'Site tools'} hidden={!open}>
+    <button type="button" className="mobile-tools-option" onClick={()=>openTool('terminal')}>
+     <span className="mobile-tools-option-icon" aria-hidden="true">&gt;_</span>
+     <span className="mobile-tools-option-copy"><strong>Terminal</strong><small>{isFr?'Explorer le terminal':'Explore the terminal'}</small></span>
+     <span className="mobile-tools-option-arrow" aria-hidden="true">↗</span>
+    </button>
+    <button type="button" className="mobile-tools-option" onClick={()=>openTool('reviews')}>
+     <span className="mobile-tools-option-icon is-review" aria-hidden="true">★</span>
+     <span className="mobile-tools-option-copy"><strong>{isFr?'Laisser un avis':'Leave a review'}</strong><small>{isFr?'Partager votre expérience':'Share your experience'}</small></span>
+     <span className="mobile-tools-option-arrow" aria-hidden="true">↗</span>
+    </button>
+   </div>
+   <button ref={launcherRef} type="button" className="mobile-tools-launcher" onClick={()=>setOpen(value=>!value)} aria-label={open?(isFr?'Fermer les outils':'Close tools'):(isFr?'Ouvrir les outils':'Open tools')} aria-expanded={open} aria-controls={menuId}>
+    <span aria-hidden="true">{open?'×':'+'}</span>
+   </button>
   </div>
  );
  return ready?createPortal(widget,document.body):null;

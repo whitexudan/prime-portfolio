@@ -36,6 +36,12 @@ export function Terminal({ t, data, language }: TerminalProps) {
     setPortalReady(true);
   }, []);
 
+  useEffect(() => {
+    const openFromMobile = () => setExpanded(true);
+    window.addEventListener("prime:open-terminal", openFromMobile);
+    return () => window.removeEventListener("prime:open-terminal", openFromMobile);
+  }, []);
+
 
   useEffect(() => {
     const log = panelLogRef.current;
@@ -51,7 +57,10 @@ export function Terminal({ t, data, language }: TerminalProps) {
     if (wasExpandedRef.current) {
       wasExpandedRef.current = false;
       window.requestAnimationFrame(() => {
-        launcherRef.current?.focus();
+        const mobileLauncher = window.matchMedia("(max-width: 1150px)").matches
+          ? document.querySelector<HTMLButtonElement>(".mobile-tools-launcher")
+          : null;
+        (mobileLauncher ?? launcherRef.current)?.focus();
       });
     }
   }, [expanded]);
