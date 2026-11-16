@@ -455,11 +455,11 @@ html[data-theme=dark]{--card:color-mix(in srgb,var(--bg) 88%,var(--accent) 12%);
 
 /* Independent black/white terminal themes with Kali-inspired blue and green accents. */
 .terminal[data-terminal-theme="dark"] {
-  --terminal-bg: #0b0f14;
+  --terminal-bg: #000000;
   --terminal-fg: #e2eaf4;
   --terminal-muted: #92a6bb;
   --terminal-accent: #38bdf8;
-  --terminal-border: #244158;
+  --terminal-border: transparent;
   --terminal-success: #a3e635;
   color-scheme: dark;
   background: var(--terminal-bg);
@@ -467,11 +467,11 @@ html[data-theme=dark]{--card:color-mix(in srgb,var(--bg) 88%,var(--accent) 12%);
 }
 
 .terminal[data-terminal-theme="light"] {
-  --terminal-bg: #f8fbff;
+  --terminal-bg: #ffffff;
   --terminal-fg: #142235;
   --terminal-muted: #5b6b7d;
   --terminal-accent: #0369a1;
-  --terminal-border: #bfd0de;
+  --terminal-border: transparent;
   --terminal-success: #287a3e;
   color-scheme: light;
   background: var(--terminal-bg);
@@ -515,8 +515,8 @@ html[data-theme=dark]{--card:color-mix(in srgb,var(--bg) 88%,var(--accent) 12%);
 }
 
 .terminal .terminal-theme-toggle:hover { background: rgba(56, 189, 248, 0.12); }
-.terminal-panel[data-terminal-theme="dark"] { background: #0b0f14; border-color: #38bdf8; }
-.terminal-panel[data-terminal-theme="light"] { background: #f8fbff; border-color: #0369a1; }
+.terminal-panel[data-terminal-theme="dark"] { background: #000000; border: 0; }
+.terminal-panel[data-terminal-theme="light"] { background: #ffffff; border: 0; }
 
 /* Filled social and verification links; match category-chip sizing, medal distinguishes certifications. */
 .operator-links>a{background:var(--accent);border-color:var(--accent);color:var(--bg)}
