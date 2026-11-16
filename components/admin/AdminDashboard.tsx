@@ -3,6 +3,7 @@ import {useEffect,useState,type ChangeEvent,type FormEvent} from 'react';
 import {usePrimeStore} from '@/store/usePrimeStore';
 import {translations} from '@/lib/i18n';
 import {defaultData} from '@/data/defaultData';
+import ReviewModeration from './ReviewModeration';
 import type {Data,Member} from '@/types/prime';
 
 type LocaleField='role'|'specialty';
@@ -35,13 +36,14 @@ function newMember(index:number):Member{
 export default function AdminDashboard({authenticated,csrf:initialCsrf,configured}:{authenticated:boolean;csrf:string;configured:boolean}){
  const {lang,setLang}=usePrimeStore();const t=translations[lang];const isFr=lang==='fr';
  const [auth,setAuth]=useState(authenticated);const [csrf,setCsrf]=useState(initialCsrf);const [password,setPassword]=useState('');
- const [data,setData]=useState<Data|null>(null);const [revision,setRevision]=useState('');const [collection,setCollection]=useState<keyof Data>('members');
+ const [data,setData]=useState<Data|null>(null);const [revision,setRevision]=useState('');const [collection,setCollection]=useState<keyof Data>('members');const [activePanel,setActivePanel]=useState<'content'|'reviews'>('content');
  const [editor,setEditor]=useState('');const [memberDraft,setMemberDraft]=useState<Member[]>([]);
 const [editorMode,setEditorMode]=useState<EditorMode>('form');
  const [message,setMessage]=useState('');const [issues,setIssues]=useState('');const [busy,setBusy]=useState(false);const [uploadingIndex,setUploadingIndex]=useState<number|null>(null);const [itemIndex,setItemIndex]=useState(0);const [dirty,setDirty]=useState(false);
 
  useEffect(()=>{try{const stored=localStorage.getItem('signal-lang');if(stored==='fr'||stored==='en')usePrimeStore.setState({lang:stored})}catch{}},[]);
  useEffect(()=>{if(auth)void load()},[auth]);
+ useEffect(()=>{if(auth&&new URLSearchParams(window.location.search).get('section')==='reviews')setActivePanel('reviews')},[auth]);
  useEffect(()=>{const stop=(event:BeforeUnloadEvent)=>{if(dirty){event.preventDefault();event.returnValue=''}};window.addEventListener('beforeunload',stop);return()=>window.removeEventListener('beforeunload',stop)},[dirty]);
 
  async function load(){
@@ -55,7 +57,7 @@ const [editorMode,setEditorMode]=useState<EditorMode>('form');
  }
  function switchCollection(key:keyof Data){
   if(dirty&&!window.confirm(isFr?'Abandonner les changements non enregistrés ?':'Discard unsaved changes?'))return;
-  setCollection(key);setEditor(JSON.stringify(data?.[key],null,2));setMemberDraft(data?.members??[]);setEditorMode('form');setItemIndex(0);setDirty(false);setIssues('');setMessage('');
+  setCollection(key);setActivePanel('content');setEditor(JSON.stringify(data?.[key],null,2));setMemberDraft(data?.members??[]);setEditorMode('form');setItemIndex(0);setDirty(false);setIssues('');setMessage('');
  }
  async function login(event:FormEvent){
   event.preventDefault();setBusy(true);setMessage('');
@@ -168,8 +170,8 @@ const [editorMode,setEditorMode]=useState<EditorMode>('form');
   <p className="eyebrow">CONTROL ROOM / {t.admin}</p><h1>{auth?t.admin:t.login}</h1><p className="admin-warning">{auth?t.adminWarning:t.loginText}</p>
   {!configured&&<p role="alert">{t.notConfigured}</p>}
   {!auth?<form className="login-form" onSubmit={login}><label htmlFor="password">{t.password}</label><input id="password" type="password" autoComplete="current-password" required value={password} onChange={event=>setPassword(event.target.value)} maxLength={1024}/><button className="button primary" disabled={busy||!configured}>{busy?t.loading:t.login}</button></form>:!data?<button type="button" onClick={()=>void load()}>{busy?t.loading:t.reload}</button>:<div className="admin-layout">
-   <nav aria-label={t.admin}>{Object.entries(names).map(([key,name])=><button type="button" className={collection===key?'selected':''} key={key} onClick={()=>switchCollection(key as keyof Data)}>{name}</button>)}{auth&&<a className="admin-review-nav-link" href="/admin/reviews">{lang==='fr'?'Avis visiteurs':'Visitor reviews'} ↗</a>}</nav>
-   <section className="admin-editor">
+   <nav aria-label={t.admin}>{Object.entries(names).map(([key,name])=><button type="button" className={collection===key?'selected':''} key={key} onClick={()=>switchCollection(key as keyof Data)}>{name}</button>)}<button type="button" className={`admin-review-nav-button ${activePanel==='reviews'?'selected':''}`} aria-pressed={activePanel==='reviews'} onClick={()=>setActivePanel('reviews')}>{lang==='fr'?'Avis visiteurs':'Visitor reviews'}</button></nav>
+   {activePanel==='reviews'?<section className="admin-editor admin-review-editor"><ReviewModeration csrf={csrf}/></section>:<section className="admin-editor">
     <div className="admin-section-heading"><div><p className="admin-kicker">DATA COLLECTION / {String(collection).toUpperCase()}</p><h2>{names[collection]}</h2></div><p>{t.editorHelp}</p></div>
     {collection==='members'&&<div className="admin-mode-switch"><div className="admin-mode-buttons" role="group" aria-label={isFr?'Mode d’édition':'Editing mode'}><button type="button" aria-pressed={editorMode==='form'} className={editorMode==='form'?'is-active':''} disabled={editorMode==='form'} onClick={toForm}>{isFr?'Formulaire':'Form'}</button><button type="button" aria-pressed={editorMode==='json'} className={editorMode==='json'?'is-active':''} disabled={editorMode==='json'} onClick={toJson}>{isFr?'JSON ← Formulaire':'JSON ← Form'}</button></div><p>{isFr?'La conversion porte sur toute la liste des membres, avatar compris.':'Conversion applies to the full member list, including avatars.'}</p></div>}
     {Array.isArray(data[collection])&&<div className="admin-actions admin-entry-actions"><label>{t.selectItem}<select value={itemIndex} onChange={event=>setItemIndex(Number(event.target.value))}>{currentEntries.map((entry,index)=><option key={index} value={index}>{index+1} / {entry&&typeof entry==='object'&&'id' in entry?String((entry as {id:unknown}).id):String(index+1)}</option>)}</select></label><button type="button" onClick={()=>collection==='members'&&editorMode==='form'?mutateMemberForm('add'):mutate('add')}>{t.add}</button><button type="button" disabled={!currentEntries.length} onClick={()=>collection==='members'&&editorMode==='form'?mutateMemberForm('publish'):mutate('publish')}>{t.publish}</button><button type="button" disabled={!currentEntries.length} onClick={()=>collection==='members'&&editorMode==='form'?mutateMemberForm('hide'):mutate('hide')}>{t.hide}</button><button type="button" disabled={!currentEntries.length} onClick={()=>collection==='members'&&editorMode==='form'?mutateMemberForm('delete'):mutate('delete')}>{t.delete}</button></div>}
@@ -199,7 +201,7 @@ const [editorMode,setEditorMode]=useState<EditorMode>('form');
      <div className="member-links member-certification-editor"><div className="member-links-heading"><div><p className="admin-kicker">PROFILE / CREDENTIALS</p><h4>{isFr?'Certifications':'Certifications'}</h4></div><button type="button" onClick={()=>addCertification(itemIndex)} disabled={selectedMember.certifications.length>=30}>{isFr?'Ajouter une certification':'Add certification'}</button></div>{selectedMember.certifications.length===0&&<p className="member-empty-links">{isFr?'Aucune certification pour le moment.':'No certifications added yet.'}</p>}{selectedMember.certifications.map((certification,certificationIndex)=><div className="member-link-row" key={`cert-${itemIndex}-${certificationIndex}`}><label className="member-field">{isFr?'Nom de la certification':'Certification name'}<input value={certification.label} onChange={event=>updateCertification(itemIndex,certificationIndex,{label:event.target.value})}/></label><label className="member-field">{isFr?'URL de vérification HTTPS':'HTTPS verification URL'}<input type="url" placeholder="https://…" value={certification.url} onChange={event=>updateCertification(itemIndex,certificationIndex,{url:event.target.value})}/></label><button type="button" className="admin-link-button" onClick={()=>removeCertification(itemIndex,certificationIndex)}>{isFr?'Retirer':'Remove'}</button></div>)}</div><div className="member-links"><div className="member-links-heading"><div><p className="admin-kicker">PROFILE / SOCIAL LINKS</p><h4>{isFr?'Réseaux sociaux':'Social links'}</h4></div><button type="button" onClick={()=>addLink(itemIndex)} disabled={selectedMember.links.length>=10}>{isFr?'Ajouter un lien':'Add link'}</button></div>{selectedMember.links.length===0&&<p className="member-empty-links">{isFr?'Aucun lien pour le moment.':'No links added yet.'}</p>}{selectedMember.links.map((link,linkIndex)=><div className="member-link-row" key={`${itemIndex}-${linkIndex}`}><label className="member-field">{isFr?'Libellé':'Label'}<input value={link.label} onChange={event=>updateLink(itemIndex,linkIndex,{label:event.target.value})}/></label><label className="member-field">URL<input type="url" placeholder="https://…" value={link.url} onChange={event=>updateLink(itemIndex,linkIndex,{url:event.target.value})}/></label><button type="button" className="admin-link-button" onClick={()=>removeLink(itemIndex,linkIndex)}>{isFr?'Retirer':'Remove'}</button></div>)}</div>
     </div>:<div className="member-empty"><p>{isFr?'Aucun membre pour l’instant.':'No members yet.'}</p><button type="button" onClick={()=>mutateMemberForm('add')}>{isFr?'Créer le premier membre':'Create the first member'}</button></div>):<div className="admin-json-panel"><label htmlFor="json-editor">{t.editor}</label><textarea id="json-editor" spellCheck={false} value={editor} onChange={event=>{setEditor(event.target.value);setDirty(true);setIssues('')}}/></div>}
     <div className="admin-actions admin-save-actions"><button type="button" className="button primary" onClick={()=>void save()} disabled={busy}>{busy?t.loading:t.save}</button><button type="button" onClick={()=>{if(!dirty||window.confirm(isFr?'Abandonner les changements ?':'Discard changes?'))void load()}} disabled={busy}>{t.reload}</button></div>
-   </section>
+   </section>}
   </div>}
   <p role="status" aria-live="polite">{message}</p>{issues&&<pre role="alert">{issues}</pre>}
  </main>

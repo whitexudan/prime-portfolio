@@ -67,7 +67,7 @@ function ReviewCard({review,language}:{review:PublicReview;language:Lang}){
  const date=new Date(review.createdAt);
  const formatted=Number.isNaN(date.getTime())?'':new Intl.DateTimeFormat(language==='fr'?'fr-FR':'en-US',{year:'numeric',month:'short',day:'numeric'}).format(date);
  return <article className="visitor-review-card">
-  <div className="visitor-review-card-top"><span className="visitor-review-quote" aria-hidden="true">“</span><span className="visitor-review-card-stars" aria-label={`${review.rating} / 5`}><span aria-hidden="true">{'★'.repeat(review.rating)}{'☆'.repeat(5-review.rating)}</span></span></div>
+  <div className="visitor-review-card-top"><span className="visitor-review-quote" aria-hidden="true">“</span><span className="visitor-review-card-stars" aria-label={`${review.rating} / 5`}><span aria-hidden="true">{'★'.repeat(review.rating)}</span><span className="visitor-review-card-stars-empty" aria-hidden="true">{'☆'.repeat(5-review.rating)}</span></span></div>
   <blockquote>{review.message}</blockquote>
   <footer><strong>{review.name}</strong>{formatted&&<time dateTime={review.createdAt}>{formatted}</time>}</footer>
  </article>
@@ -79,19 +79,21 @@ export function ReviewsSection({language}:{language:Lang}){
  const [loading,setLoading]=useState(true);
  const [error,setError]=useState(false);
  const [paused,setPaused]=useState(false);
+ const [reducedMotion,setReducedMotion]=useState(false);
  const load=useCallback(async()=>{
   setLoading(true);setError(false);
   try{const response=await fetch('/api/reviews',{cache:'no-store'});if(!response.ok)throw new Error('REVIEWS');const payload=await response.json() as {reviews:PublicReview[]};setReviews(Array.isArray(payload.reviews)?payload.reviews:[])}
   catch{setError(true)}finally{setLoading(false)}
  },[]);
  useEffect(()=>{void load()},[load]);
- const canMove=reviews.length>=3;
+ useEffect(()=>{const media=window.matchMedia('(prefers-reduced-motion: reduce)');const sync=()=>setReducedMotion(media.matches);sync();media.addEventListener('change',sync);return()=>media.removeEventListener('change',sync)},[]);
+ const canMove=reviews.length>=3&&!reducedMotion;
  const average=reviews.length?reviews.reduce((sum,review)=>sum+review.rating,0)/reviews.length:0;
  return <section className="section visitor-reviews-section" id="visitor-reviews" aria-labelledby="visitor-reviews-title">
-  <div className="visitor-reviews-heading"><div><p className="eyebrow">03 / {isFr?'COMMUNAUTÉ':'COMMUNITY'}</p><h2 className="display" id="visitor-reviews-title">{isFr?'Avis visiteurs':'Visitor reviews'}</h2><p className="visitor-reviews-intro">{isFr?'Les impressions de celles et ceux qui ont découvert notre travail.':'Thoughts from people who have explored our work.'}</p></div>{reviews.length>0&&<div className="visitor-review-summary"><strong>{average.toFixed(1)}<span>/5</span></strong><span aria-hidden="true">★</span><small>{reviews.length} {isFr?'avis publiés':'published reviews'}</small></div>}</div>
+  <div className="visitor-reviews-heading"><div><p className="eyebrow review-eyebrow">{isFr?'VOIX DE LA COMMUNAUTÉ':'COMMUNITY VOICES'}</p><h2 className="display" id="visitor-reviews-title">{isFr?'Avis visiteurs':'Visitor reviews'}</h2><p className="visitor-reviews-intro">{isFr?'Les impressions de celles et ceux qui ont découvert notre travail.':'Thoughts from people who have explored our work.'}</p></div>{reviews.length>0&&<div className="visitor-review-summary"><strong>{average.toFixed(1)}<span>/5</span></strong><span aria-hidden="true">★</span><small>{reviews.length} {isFr?'avis publiés':'published reviews'}</small></div>}</div>
   {loading?<p className="visitor-reviews-state" role="status">{isFr?'Chargement des avis…':'Loading reviews…'}</p>:error?<p className="visitor-reviews-state" role="status">{isFr?'Les avis sont momentanément indisponibles.':'Reviews are temporarily unavailable.'} <button type="button" onClick={()=>void load()}>{isFr?'Réessayer':'Retry'}</button></p>:reviews.length===0?<p className="visitor-reviews-state">{isFr?'Aucun avis publié pour le moment. Soyez le premier à partager votre expérience.':'No reviews published yet. Be the first to share your experience.'}</p>:<>
    {canMove&&<button className="visitor-reviews-motion" type="button" onClick={()=>setPaused(value=>!value)} aria-pressed={paused}>{paused?(isFr?'Reprendre le défilement':'Resume carousel'):(isFr?'Mettre en pause':'Pause carousel')}</button>}
-   <div className={`visitor-review-window ${canMove?'is-moving':''} ${paused?'is-paused':''}`} aria-label={isFr?'Avis publiés':'Published visitor reviews'}>
+   <div className={`visitor-review-window ${canMove?'is-moving':''} ${paused?'is-paused':''}`} role="region" aria-roledescription={isFr?'carrousel':'carousel'} aria-label={isFr?'Avis publiés':'Published visitor reviews'}>
     <div className="visitor-review-track">
      <div className={`visitor-review-group ${canMove?'':'is-static'}`}>{reviews.map(review=><ReviewCard key={`a-${review.id}`} review={review} language={language}/>)}</div>
      {canMove&&<div className="visitor-review-group" aria-hidden="true">{reviews.map(review=><ReviewCard key={`b-${review.id}`} review={review} language={language}/>)}</div>}
