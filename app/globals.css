@@ -494,7 +494,6 @@ html[data-theme=dark]{--card:color-mix(in srgb,var(--bg) 88%,var(--accent) 12%);
 .terminal[data-terminal-theme] input { color: var(--terminal-fg); }
 .terminal[data-terminal-theme] input::placeholder { color: var(--terminal-muted); opacity: 1; }
 .terminal[data-terminal-theme] button { color: var(--terminal-accent); }
-.terminal[data-terminal-theme] form:focus-within { box-shadow: inset 0 0 0 2px var(--terminal-accent); }
 .terminal[data-terminal-theme] button:focus-visible { outline-color: var(--terminal-accent); }
 .terminal-top .terminal-path { margin-left: auto; }
 
