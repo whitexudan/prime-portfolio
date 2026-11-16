@@ -696,3 +696,179 @@ html[data-theme=dark]{--card:color-mix(in srgb,var(--bg) 88%,var(--accent) 12%);
  .visitor-review-window .visitor-review-track{animation:none!important;transform:none!important;will-change:auto}
  .visitor-review-motion{display:none}
 }
+
+/* Close the visitor-review marquee seam with a responsive gap. */
+.visitor-review-window.is-moving .visitor-review-track{
+  --visitor-review-loop-gap:24px;
+  --visitor-review-loop-correction:12px;
+  gap:var(--visitor-review-loop-gap);
+  animation-name:visitor-review-loop;
+}
+.visitor-review-window.is-moving .visitor-review-group:not(.is-static){padding-right:0}
+@keyframes visitor-review-loop{
+  from{transform:translateX(0)}
+  to{transform:translateX(calc(-50% - var(--visitor-review-loop-correction)))}
+}
+@media(max-width:1100px){
+  .visitor-review-window.is-moving .visitor-review-track{
+    --visitor-review-loop-gap:20px;
+    --visitor-review-loop-correction:10px;
+  }
+}
+@media(max-width:700px){
+  .visitor-review-window.is-moving .visitor-review-track{
+    --visitor-review-loop-gap:16px;
+    --visitor-review-loop-correction:8px;
+  }
+}
+
+/* Mobile review carousel — one complete, centered card per frame */
+@media (max-width: 700px) {
+  .visitor-reviews-section {
+    padding-block: clamp(44px, 9vw, 64px);
+  }
+
+  .visitor-reviews-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 22px;
+  }
+
+  .visitor-reviews-heading .eyebrow {
+    margin-bottom: 10px;
+    font-size: 10px;
+    letter-spacing: .16em;
+  }
+
+  .visitor-reviews-heading .display {
+    max-width: 100%;
+    margin: 0 0 10px;
+    font-size: clamp(34px, 9vw, 46px);
+    line-height: 1;
+    overflow-wrap: anywhere;
+  }
+
+  .visitor-reviews-intro {
+    max-width: 36ch;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .visitor-review-summary {
+    display: flex;
+    width: fit-content;
+    max-width: 100%;
+    grid-column: auto;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 12px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--card) 82%, transparent);
+    text-align: left;
+  }
+
+  .visitor-review-summary strong {
+    font-size: 17px;
+    line-height: 1;
+  }
+
+  .visitor-review-summary strong span {
+    margin-left: 2px;
+    font-size: 11px;
+  }
+
+  .visitor-review-summary > span {
+    font-size: 16px;
+    line-height: 1;
+  }
+
+  .visitor-review-summary small {
+    font-size: 10px;
+    line-height: 1.3;
+  }
+
+  .visitor-reviews-motion {
+    min-height: 42px;
+    margin: 0 0 12px auto;
+    padding: 9px 13px;
+    font-size: 11px;
+  }
+
+  .visitor-review-window {
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
+    contain: inline-size;
+  }
+
+  .visitor-review-window.is-moving .visitor-review-track {
+    width: 600%;
+  }
+
+  .visitor-review-window.is-moving .visitor-review-group {
+    flex: 0 0 50%;
+    box-sizing: border-box;
+  }
+
+  .visitor-review-group:not(.is-static) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    padding: 0 8px;
+  }
+
+  .visitor-review-group.is-static {
+    flex: 0 0 100%;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+    padding: 0;
+  }
+
+  .visitor-review-card {
+    min-height: 218px;
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 10px 26px rgba(0, 0, 0, .12);
+  }
+
+  .visitor-review-card-top {
+    margin-bottom: 5px;
+  }
+
+  .visitor-review-card-stars {
+    gap: 3px;
+    font-size: clamp(19px, 5vw, 22px);
+    letter-spacing: .02em;
+  }
+
+  .visitor-review-card blockquote {
+    margin: 13px 0 20px;
+    font-size: 15px;
+    line-height: 1.62;
+  }
+
+  .visitor-review-card footer {
+    gap: 10px;
+    padding-top: 12px;
+  }
+
+  .visitor-review-card footer strong {
+    font-size: 15px;
+  }
+
+  .visitor-review-card footer time {
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 380px) {
+  .visitor-review-card {
+    min-height: 206px;
+    padding: 17px;
+  }
+
+  .visitor-review-card blockquote {
+    font-size: 14px;
+  }
+}
