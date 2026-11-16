@@ -938,3 +938,93 @@ html[data-theme=dark]{--card:color-mix(in srgb,var(--bg) 88%,var(--accent) 12%);
 @media(prefers-reduced-motion:reduce){
  .mobile-tools-launcher,.mobile-tools-option,.visitor-review-close,.visitor-review-submit,.visitor-review-form .visitor-review-field>input,.visitor-review-form .visitor-review-field>textarea{transition:none!important}
 }
+
+/* Visitor review rating: crisp vector stars with an unmistakable selected state */
+.visitor-review-star-option{
+ position:relative;
+ display:grid;
+ place-items:center;
+ flex:0 0 44px;
+ width:44px;
+ height:44px;
+ border:1px solid color-mix(in srgb,var(--fg) 22%,var(--line));
+ border-radius:13px;
+ background:color-mix(in srgb,var(--bg) 84%,transparent);
+ color:var(--muted);
+ cursor:pointer;
+ transition:transform .2s cubic-bezier(.2,.8,.2,1),color .18s ease,border-color .18s ease,background .18s ease,box-shadow .18s ease;
+}
+.visitor-review-star-option input{
+ position:absolute;
+ inset:0;
+ width:100%;
+ height:100%;
+ margin:0;
+ opacity:0;
+ cursor:pointer;
+}
+.visitor-review-star-icon{
+ display:block;
+ width:25px;
+ height:25px;
+ overflow:visible;
+ fill:transparent;
+ stroke:currentColor;
+ stroke-width:1.7;
+ stroke-linecap:round;
+ stroke-linejoin:round;
+ pointer-events:none;
+ transition:transform .2s cubic-bezier(.2,.8,.2,1),fill .18s ease,stroke .18s ease,filter .18s ease;
+}
+.visitor-review-star-option.is-active{
+ color:var(--accent);
+ border-color:color-mix(in srgb,var(--accent) 72%,var(--line));
+ background:color-mix(in srgb,var(--accent) 11%,var(--bg));
+}
+.visitor-review-star-option.is-active .visitor-review-star-icon{
+ fill:var(--accent);
+ stroke:var(--accent);
+ filter:drop-shadow(0 2px 5px color-mix(in srgb,var(--accent) 40%,transparent));
+}
+.visitor-review-star-option:hover{
+ transform:translateY(-2px) scale(1.04);
+ border-color:var(--accent);
+}
+.visitor-review-star-option.is-selected{
+ transform:translateY(-2px) scale(1.07);
+ border-color:var(--accent);
+ background:color-mix(in srgb,var(--accent) 18%,var(--bg));
+ box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 20%,transparent),0 7px 18px color-mix(in srgb,var(--accent) 24%,transparent);
+}
+.visitor-review-star-option.is-selected .visitor-review-star-icon{
+ animation:prime-review-star-pop .34s cubic-bezier(.2,.8,.2,1);
+}
+.visitor-review-star-option:has(input:focus-visible){
+ outline:3px solid color-mix(in srgb,var(--accent) 72%,white);
+ outline-offset:3px;
+}
+@keyframes prime-review-star-pop{
+ 0%{transform:scale(.68) rotate(-12deg)}
+ 68%{transform:scale(1.24) rotate(5deg)}
+ 100%{transform:scale(1) rotate(0)}
+}
+
+/* A soft alpha mask keeps moving review cards partially visible at the edges. */
+.visitor-review-window.is-moving{
+ -webkit-mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.42) 2%,#000 7%,#000 93%,rgba(0,0,0,.42) 98%,transparent 100%);
+ mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.42) 2%,#000 7%,#000 93%,rgba(0,0,0,.42) 98%,transparent 100%);
+}
+@media(max-width:700px){
+ .visitor-review-window.is-moving{
+  -webkit-mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.48) 2%,#000 8%,#000 92%,rgba(0,0,0,.48) 98%,transparent 100%);
+  mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.48) 2%,#000 8%,#000 92%,rgba(0,0,0,.48) 98%,transparent 100%);
+ }
+}
+@media(max-width:380px){
+ .visitor-review-stars{gap:6px}
+ .visitor-review-star-option{flex-basis:38px;width:38px;height:38px}
+ .visitor-review-star-icon{width:22px;height:22px}
+}
+@media(prefers-reduced-motion:reduce){
+ .visitor-review-star-option,.visitor-review-star-icon{transition:none!important;animation:none!important}
+}

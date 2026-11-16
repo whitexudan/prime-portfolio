@@ -13,6 +13,8 @@ export function ReviewLauncher({language}:{language:Lang}){
  const [name,setName]=useState('');
  const [message,setMessage]=useState('');
  const [rating,setRating]=useState(5);
+ const [hoverRating,setHoverRating]=useState<number|null>(null);
+ const displayedRating=hoverRating??rating;
  const [startedAt,setStartedAt]=useState(0);
  const [sending,setSending]=useState(false);
  const [notice,setNotice]=useState<Notice>(null);
@@ -48,7 +50,7 @@ export function ReviewLauncher({language}:{language:Lang}){
   try{
    const response=await fetch('/api/reviews',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,message,rating,website:(new FormData(event.currentTarget).get('website')??'').toString(),startedAt})});
    if(!response.ok){setNotice(response.status===429?'limited':response.status===400?'invalid':'error');return}
-   setName('');setMessage('');setRating(5);setStartedAt(Date.now());setNotice('success');
+   setName('');setMessage('');setRating(5);setHoverRating(null);setStartedAt(Date.now());setNotice('success');
   }catch{setNotice('error')}finally{setSending(false)}
  }
  const widget=(
@@ -64,7 +66,7 @@ export function ReviewLauncher({language}:{language:Lang}){
       <label htmlFor="visitor-review-name"><span>{isFr?'Votre nom':'Your name'}</span><span className="visitor-review-field-meta">01</span></label>
       <input ref={nameRef} id="visitor-review-name" name="name" value={name} onChange={e=>setName(e.currentTarget.value)} minLength={2} maxLength={60} autoComplete="name" placeholder={isFr?'Ex. Afi K.':'e.g. Alex K.'} required />
      </div>
-     <fieldset className="visitor-review-rating"><legend><span className="visitor-review-field-meta">02</span>{isFr?'Votre note':'Your rating'}</legend><div className="visitor-review-stars" role="radiogroup" aria-label={isFr?'Note de 1 à 5 étoiles':'Rating from 1 to 5 stars'}>{[1,2,3,4,5].map(value=><label className="visitor-review-star-option" key={value}><input type="radio" name="visitor-rating" value={value} checked={rating===value} onChange={()=>setRating(value)} aria-label={isFr?`${value} étoile${value>1?'s':''}`:`${value} star${value>1?'s':''}`} /><span aria-hidden="true">★</span></label>)}</div></fieldset>
+     <fieldset className="visitor-review-rating"><legend><span className="visitor-review-field-meta">02</span>{isFr?'Votre note':'Your rating'}</legend><div className="visitor-review-stars" role="radiogroup" aria-label={isFr?'Note de 1 à 5 étoiles':'Rating from 1 to 5 stars'}>{[1,2,3,4,5].map(value=><label className={`visitor-review-star-option${displayedRating>=value?' is-active':''}${rating===value?' is-selected':''}`} key={value} onMouseEnter={()=>setHoverRating(value)} onMouseLeave={()=>setHoverRating(null)}><input type="radio" name="visitor-rating" value={value} checked={rating===value} onChange={()=>{setRating(value);setHoverRating(null)}} onFocus={()=>setHoverRating(value)} onBlur={()=>setHoverRating(null)} aria-label={isFr?`${value} étoile${value>1?'s':''}`:`${value} star${value>1?'s':''}`} /><svg className="visitor-review-star-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2.4l2.96 6 6.62.96-4.79 4.67 1.13 6.6L12 17.51l-5.92 3.12 1.13-6.6-4.79-4.67L9.04 8.4 12 2.4z"/></svg></label>)}</div></fieldset>
      <div className="visitor-review-field visitor-review-message-field">
       <label htmlFor="visitor-review-message"><span>{isFr?'Votre avis':'Your review'}</span><span className="visitor-review-field-meta">{message.length}/700</span></label>
       <textarea id="visitor-review-message" name="review" value={message} onChange={e=>setMessage(e.currentTarget.value)} minLength={15} maxLength={700} rows={4} placeholder={isFr?'Qu’avez-vous apprécié dans votre visite ?':'What did you enjoy about your visit?'} required />
