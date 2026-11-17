@@ -572,7 +572,7 @@ html[data-theme=dark]{--card:color-mix(in srgb,var(--bg) 88%,var(--accent) 12%);
 .visitor-reviews-motion{display:block;margin:0 0 14px auto}
 .visitor-review-window{overflow:hidden;width:100%;}
 .visitor-review-track{display:flex;width:100%;}
-.visitor-review-window.is-moving .visitor-review-track{width:200%;animation:visitor-review-marquee 15s linear infinite;will-change:transform}
+.visitor-review-window.is-moving .visitor-review-track{width:200%;animation:visitor-review-marquee 13s linear infinite;will-change:transform}
 .visitor-review-window.is-moving .visitor-review-group{flex:0 0 50%}
 .visitor-review-window.is-moving.is-paused .visitor-review-track,.visitor-review-window.is-moving:hover .visitor-review-track,.visitor-review-window.is-moving:focus-within .visitor-review-track{animation-play-state:paused}
 .visitor-review-group{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;flex:0 0 100%;min-width:0}
@@ -702,6 +702,7 @@ html[data-theme=dark]{--card:color-mix(in srgb,var(--bg) 88%,var(--accent) 12%);
   --visitor-review-loop-correction:12px;
   gap:var(--visitor-review-loop-gap);
   animation-name:visitor-review-loop;
+  animation-duration:13s;
 }
 .visitor-review-window.is-moving .visitor-review-group:not(.is-static){padding-right:0}
 @keyframes visitor-review-loop{
