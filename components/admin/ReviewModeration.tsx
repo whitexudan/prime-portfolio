@@ -24,6 +24,17 @@ export default function ReviewModeration({csrf}:{csrf:string}){
   try{const response=await fetch('/api/prime/reviews',{method:'PATCH',headers:{'Content-Type':'application/json','x-csrf-token':csrf},body:JSON.stringify({id:review.id,status})});if(!response.ok)throw new Error('UPDATE');await load(filter)}
   catch{setError(isFr?'Modification refusée. Vérifie ta session puis réessaie.':'Update failed. Check your session and try again.')}finally{setBusyId('')}
  }
+ async function deleteRejected(review:Review){
+  if(review.status!=='rejected')return;
+  const confirmed=window.confirm(isFr?`Supprimer définitivement l’avis de « ${review.name} » ? Cette action est irréversible.`:`Permanently delete ${review.name}’s review? This cannot be undone.`);
+  if(!confirmed)return;
+  setBusyId(review.id);setError('');
+  try{
+   const response=await fetch('/api/prime/reviews',{method:'DELETE',headers:{'Content-Type':'application/json','x-csrf-token':csrf},body:JSON.stringify({id:review.id})});
+   if(!response.ok)throw new Error('DELETE');
+   setReviews(current=>current.filter(item=>item.id!==review.id));
+  }catch{setError(isFr?'Suppression impossible. Vérifie ta session puis réessaie.':'Could not delete the review. Check your session and try again.')}finally{setBusyId('')}
+ }
  const statusLabel=(status:Status)=>status==='pending'?(isFr?'À vérifier':'Pending'):status==='approved'?(isFr?'Publié':'Published'):(isFr?'Refusé':'Rejected');
  return <section className="admin-review-embedded" aria-labelledby="admin-review-title">
   <header className="admin-review-embedded-heading"><div><p className="admin-kicker">CONTROL ROOM / {isFr?'AVIS VISITEURS':'VISITOR REVIEWS'}</p><h2 id="admin-review-title">{isFr?'Modération des avis':'Review moderation'}</h2><p>{isFr?'Les avis restent conservés dans Supabase. Seuls les avis approuvés apparaissent sur le site.':'Reviews remain stored in Supabase. Only approved reviews appear on the site.'}</p></div><button type="button" className="admin-review-refresh" onClick={()=>void load(filter)} disabled={loading}>{loading?(isFr?'Actualisation…':'Refreshing…'):(isFr?'Actualiser':'Refresh')}</button></header>
@@ -32,7 +43,7 @@ export default function ReviewModeration({csrf}:{csrf:string}){
   {loading?<p className="admin-review-empty" role="status">{isFr?'Chargement…':'Loading…'}</p>:reviews.length===0?<p className="admin-review-empty">{isFr?'Aucun avis dans cette liste.':'No reviews in this list.'}</p>:<div className="admin-review-list">{reviews.map(review=><article className="admin-review-item" key={review.id}>
    <div className="admin-review-item-head"><div><h3>{review.name}</h3><p className="micro">{new Date(review.createdAt).toLocaleString(isFr?'fr-FR':'en-US')} · {statusLabel(review.status)}</p></div><strong aria-label={`${review.rating} / 5`}>{'★'.repeat(review.rating)}{'☆'.repeat(5-review.rating)}</strong></div>
    <blockquote>{review.message}</blockquote>
-   <div className="admin-review-actions">{review.status!=='approved'&&<button type="button" className="button primary" disabled={busyId===review.id} onClick={()=>void changeStatus(review,'approved')}>{isFr?'Approuver et publier':'Approve and publish'}</button>}{review.status!=='rejected'&&<button type="button" className="button" disabled={busyId===review.id} onClick={()=>void changeStatus(review,'rejected')}>{isFr?'Refuser':'Reject'}</button>}</div>
+   <div className="admin-review-actions">{review.status!=='approved'&&<button type="button" className="button primary" disabled={busyId===review.id} onClick={()=>void changeStatus(review,'approved')}>{isFr?'Approuver et publier':'Approve and publish'}</button>}{review.status!=='rejected'&&<button type="button" className="button" disabled={busyId===review.id} onClick={()=>void changeStatus(review,'rejected')}>{isFr?'Refuser':'Reject'}</button>}{review.status==='rejected'&&<button type="button" className="button" disabled={busyId===review.id} onClick={()=>void deleteRejected(review)}>{busyId===review.id?(isFr?'Suppression…':'Deleting…'):(isFr?'Supprimer définitivement':'Delete permanently')}</button>}</div>
   </article>)}</div>}
  </section>;
 }

@@ -13,5 +13,7 @@ export const reviewModerationSchema=z.object({
  status:z.enum(['approved','rejected']),
 }).strict();
 
+export const reviewDeleteSchema=z.object({id:z.string().uuid()}).strict();
+
 export type ReviewSubmission=z.infer<typeof reviewSubmissionSchema>;
 export type ReviewStatus='pending'|'approved'|'rejected';

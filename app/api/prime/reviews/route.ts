@@ -1,6 +1,6 @@
 import {NextResponse} from 'next/server';
 import {authorized,boundedJson,session} from '@/lib/auth';
-import {reviewModerationSchema,type ReviewStatus} from '@/lib/reviews';
+import {reviewDeleteSchema,reviewModerationSchema,type ReviewStatus} from '@/lib/reviews';
 import {supabaseAdmin} from '@/lib/supabase-admin';
 
 export const runtime='nodejs';
@@ -31,5 +31,19 @@ export async function PATCH(request:Request){
   if(error)return NextResponse.json({error:'REVIEW_UPDATE_FAILED'},{status:503,headers});
   if(!data)return NextResponse.json({error:'NOT_FOUND'},{status:404,headers});
   return NextResponse.json({review:{id:data.id,name:data.visitor_name,message:data.review_text,rating:data.rating,status:data.status,createdAt:data.created_at}},{headers});
+ }catch{return NextResponse.json({error:'INVALID_REQUEST'},{status:400,headers})}
+}
+
+
+export async function DELETE(request:Request){
+ if(!await authorized(request))return NextResponse.json({error:'UNAUTHORIZED'},{status:403,headers});
+ try{
+  const raw=await boundedJson(request,2048);
+  const parsed=reviewDeleteSchema.safeParse(raw);
+  if(!parsed.success)return NextResponse.json({error:'VALIDATION'},{status:400,headers});
+  const {data:deletedId,error}=await supabaseAdmin().rpc('prime_reviews_delete_rejected',{p_review_id:parsed.data.id});
+  if(error)return NextResponse.json({error:'REVIEW_DELETE_FAILED'},{status:503,headers});
+  if(typeof deletedId!=='string')return NextResponse.json({error:'REVIEW_NOT_REJECTED_OR_NOT_FOUND'},{status:404,headers});
+  return NextResponse.json({ok:true,id:deletedId},{headers});
  }catch{return NextResponse.json({error:'INVALID_REQUEST'},{status:400,headers})}
 }

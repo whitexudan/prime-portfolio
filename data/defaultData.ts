@@ -64,5 +64,5 @@ export const defaultData:Data = {
   {id:'amber',name:'Amber Terminal',dark:'#3a2307',light:'#f6e2b5',lightAccent:'#9a4b00',darkAccent:'#ffba00',secondary:'#f07c00'},
   {id:'red',name:'Red Alert',dark:'#3a101a',light:'#f3cbd2',lightAccent:'#b00020',darkAccent:'#ff426b',secondary:'#f01446'}
  ],
- settings:{defaultTheme:'light',defaultPalette:'red',defaultLanguage:'fr',enable3d:true}
+ settings:{defaultTheme:'dark',defaultPalette:'red',defaultLanguage:'fr',enable3d:true}
 };

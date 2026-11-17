@@ -12,7 +12,7 @@ export function ReviewLauncher({language}:{language:Lang}){
  const [expanded,setExpanded]=useState(false);
  const [name,setName]=useState('');
  const [message,setMessage]=useState('');
- const [rating,setRating]=useState(5);
+ const [rating,setRating]=useState(4);
  const [hoverRating,setHoverRating]=useState<number|null>(null);
  const displayedRating=hoverRating??rating;
  const [startedAt,setStartedAt]=useState(0);
@@ -50,7 +50,7 @@ export function ReviewLauncher({language}:{language:Lang}){
   try{
    const response=await fetch('/api/reviews',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,message,rating,website:(new FormData(event.currentTarget).get('website')??'').toString(),startedAt})});
    if(!response.ok){setNotice(response.status===429?'limited':response.status===400?'invalid':'error');return}
-   setName('');setMessage('');setRating(5);setHoverRating(null);setStartedAt(Date.now());setNotice('success');
+   setName('');setMessage('');setRating(4);setHoverRating(null);setStartedAt(Date.now());setNotice('success');
   }catch{setNotice('error')}finally{setSending(false)}
  }
  const widget=(
