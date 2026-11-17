@@ -109,7 +109,7 @@ function MobileToolsLauncher({language}:{language:Lang}){
     </button>
     <button type="button" className="mobile-tools-option" onClick={()=>openTool('reviews')}>
      <span className="mobile-tools-option-icon is-review" aria-hidden="true">★</span>
-     <span className="mobile-tools-option-copy"><strong>{isFr?'Laisser un avis':'Leave a review'}</strong><small>{isFr?'Partager votre expérience':'Share your experience'}</small></span>
+     <span className="mobile-tools-option-copy"><strong>{isFr?'Laisser un avis':'Leave a review'}</strong><small>{isFr?'Laissez votre avis':'Leave your review'}</small></span>
      <span className="mobile-tools-option-arrow" aria-hidden="true">↗</span>
     </button>
    </div>
